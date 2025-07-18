@@ -1,0 +1,6 @@
+@Khourse.Api_HostAddress = http://localhost:5186
+
+GET {{Khourse.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
