@@ -1,5 +1,6 @@
 using DotNetEnv;
 using Khourse.Api.Data;
+using Khourse.Api.Extensions;
 using Khourse.Api.Repositories;
 using Khourse.Api.Repositories.IRepositories;
 using Microsoft.AspNetCore.Mvc;
@@ -52,6 +53,9 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
+
+app.UseCustomMethodNotFoundHandler();
+
 
 app.MapControllers();
 app.Run();
