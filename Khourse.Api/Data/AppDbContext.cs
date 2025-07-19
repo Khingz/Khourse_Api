@@ -11,8 +11,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Course> Course => Set<Course>();
     public DbSet<User> User => Set<User>();
 
-    // This overides/set default value for createdAt and updateAt property fields
-    public override int SaveChanges()
+    // This overides/set default value for createdAt and updateAt property fields asynchronously
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         var entries = ChangeTracker.Entries<BaseModel>();
 
@@ -29,6 +29,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             }
         }
 
-        return base.SaveChanges();
+        return await base.SaveChangesAsync(cancellationToken);
     }
+ 
 }

@@ -20,4 +20,7 @@ public class Course : BaseModel
     [Column("is_published")]
     public bool IsPublished { get; set; }
 
+    [Column("modules")]
+    public ICollection<Module> Modules { get; set; } = [];
+
 }

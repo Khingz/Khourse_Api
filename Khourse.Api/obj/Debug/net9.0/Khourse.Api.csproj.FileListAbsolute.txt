@@ -130,3 +130,7 @@
 /home/khingz/Documents/GOD OF SHINOBI/CSharp/Khourse/Khourse.Api/bin/Debug/net9.0/zh-Hans/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 /home/khingz/Documents/GOD OF SHINOBI/CSharp/Khourse/Khourse.Api/bin/Debug/net9.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 /home/khingz/Documents/GOD OF SHINOBI/CSharp/Khourse/Khourse.Api/bin/Debug/net9.0/Microsoft.AspNetCore.Mvc.Versioning.dll
+/home/khingz/Documents/GOD OF SHINOBI/CSharp/Khourse/Khourse.Api/bin/Debug/net9.0/Microsoft.AspNetCore.JsonPatch.dll
+/home/khingz/Documents/GOD OF SHINOBI/CSharp/Khourse/Khourse.Api/bin/Debug/net9.0/Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+/home/khingz/Documents/GOD OF SHINOBI/CSharp/Khourse/Khourse.Api/bin/Debug/net9.0/Newtonsoft.Json.dll
+/home/khingz/Documents/GOD OF SHINOBI/CSharp/Khourse/Khourse.Api/bin/Debug/net9.0/Newtonsoft.Json.Bson.dll
