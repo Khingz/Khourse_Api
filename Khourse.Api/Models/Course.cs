@@ -18,7 +18,7 @@ public class Course : BaseModel
     public User? Author { get; set; }
 
     [Column("is_published")]
-    public bool IsPublished { get; set; }
+    public bool IsPublished { get; set; } = false;
 
     [Column("modules")]
     public ICollection<Module> Modules { get; set; } = [];
