@@ -17,11 +17,11 @@ public static class MethodNotFoundMiddlewareExtensions
                 var errorResponse = new
                 {
                     success = false,
+                    message = "The requested endpoint does not exist.",
                     error = new
                     {
                         code = 405,
-                        type = "MethodNotFound",
-                        message = "The requested endpoint does not exist."
+                        type = "Method Not Allowed",
                     }
                 };
 

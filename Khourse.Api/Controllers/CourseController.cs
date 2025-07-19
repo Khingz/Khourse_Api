@@ -45,4 +45,26 @@ public class CourseController : BaseController
         return OkResponse("Course feteched successfully", course);
 
     }
+
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateCourseRequestDto updateDto)
+    {
+        var course = await _courseRepo.UpdateAsync(id, updateDto);
+        if (course == null)
+        {
+            return ErrorResponse(404, "Not Found", "Course not found");
+        }
+        return OkResponse("Course feteched successfully", course);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete([FromRoute] Guid id)
+    {
+        var course = await _courseRepo.DeleteAsync(id);
+        if (course == null)
+        {
+            return ErrorResponse(404, "Not Found", "Course not found");
+        }
+        return OkResponse("Course deleted successfully", course);
+    }
 }

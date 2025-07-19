@@ -7,7 +7,7 @@ public class ApiResponse<T>
     public T? Data { get; set; }
     public ApiError? Error { get; set; }
 
-    public static ApiResponse<T> Ok(string? message, T data)
+    public static ApiResponse<T> Ok(string? message, T? data)
     {
         return new ApiResponse<T> { Success = true, Message = message, Data = data };
     }
@@ -17,11 +17,12 @@ public class ApiResponse<T>
         return new ApiResponse<T>
         {
             Success = false,
+            Message = message,
             Error = new ApiError
             {
                 Code = code,
                 Type = type,
-                Message = message,
+                
             }
         };
     }
@@ -31,5 +32,4 @@ public class ApiError
 {
     public int Code { get; set; }
     public string? Type { get; set; }
-    public string? Message { get; set; }
 }

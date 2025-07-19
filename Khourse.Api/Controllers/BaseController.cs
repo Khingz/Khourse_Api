@@ -12,8 +12,8 @@ public class BaseController : ControllerBase
             return Ok(ApiResponse<T>.Ok(message, data));
         }
 
-        protected IActionResult ErrorResponse(int code, string type, string message, object? details = null)
+        protected IActionResult ErrorResponse(int code, string type, string message)
         {
-            return StatusCode(code, ApiResponse<string>.Fail(code, type, message, details));
+            return StatusCode(code, ApiResponse<string>.Fail(code, type, message));
         }
 }
