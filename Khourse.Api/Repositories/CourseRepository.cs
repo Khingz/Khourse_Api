@@ -33,7 +33,7 @@ public class CourseRepository(AppDbContext dbContext) : ICourseRepository
         return _dbContext.Course.AnyAsync(s => s.Id == id);
     }
 
-    private static void UpdateStockFields(Course course, UpdateCourseRequestDto updateDto)
+    private static void UpdateCourseFields(Course course, UpdateCourseRequestDto updateDto)
     {
         course.IsPublished = updateDto.IsPublished;
         course.Title = updateDto.Title ?? course.Title;
@@ -49,7 +49,7 @@ public class CourseRepository(AppDbContext dbContext) : ICourseRepository
         {
             return null;
         }
-        UpdateStockFields(course, courseUpdateDto);
+        UpdateCourseFields(course, courseUpdateDto);
         await _dbContext.SaveChangesAsync();
         return course;
     }

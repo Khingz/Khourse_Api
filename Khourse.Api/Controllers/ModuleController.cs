@@ -42,4 +42,42 @@ public class ModuleController(IModuleRepository moduleRepo, ICourseRepository co
         return OkResponse("Module feteched successfully", course);
 
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var modules = await _moduleRepo.GetAllAsync();
+        var moduleDto = modules.Select(c => c.ToModuleDto());
+        return OkResponse("Courses fetched successfully", moduleDto);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete([FromRoute] string id)
+    {
+        if (!GuidUtils.TryParse(id, out Guid guid))
+        {
+            return BadRequestResponse("Invalid GUID format.");
+        }
+        var module = await _moduleRepo.DeleteAsync(guid);
+        if (module == null)
+        {
+            return ErrorResponse(404, "Not Found", "Module not found");
+        }
+        return OkResponse("module deleted successfully", module);
+    }
+
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> Update([FromRoute] string id, [FromBody] UpdateModuleRequestDto updateDto)
+    {
+        if (!GuidUtils.TryParse(id, out Guid guid))
+        {
+            return BadRequestResponse("Invalid GUID format.");
+        }
+        var module = await _moduleRepo.UpdateAsync(guid, updateDto);
+        if (module == null)
+        {
+            return ErrorResponse(404, "Not Found", "Module not found");
+        }
+        return OkResponse("Module feteched successfully", module);
+    }
 }

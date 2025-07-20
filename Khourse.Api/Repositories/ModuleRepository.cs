@@ -18,14 +18,22 @@ public class ModuleRepository(AppDbContext dbContext) : IModuleRepository
         return module;
     }
 
-    public Task<Module?> DeleteAsync(Guid id)
+    public async Task<Module?> DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var module = await _dbContext.Module.FirstOrDefaultAsync(x => x.Id == id);
+
+        if (module == null)
+        {
+            return null;
+        }
+        _dbContext.Module.Remove(module);
+        await _dbContext.SaveChangesAsync();
+        return module;
     }
 
-    public Task<List<Module>> GetAllAsync()
+    public async Task<List<Module>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return await _dbContext.Module.ToListAsync();
     }
 
     public async Task<Module?> GetByIdAsync(Guid id)
@@ -33,8 +41,23 @@ public class ModuleRepository(AppDbContext dbContext) : IModuleRepository
         return await _dbContext.Module.FirstOrDefaultAsync(i => i.Id == id);
     }
 
-    public Task<Module?> UpdateAsync(Guid id, UpdateModuleRequestDto module)
+    public async Task<Module?> UpdateAsync(Guid id, UpdateModuleRequestDto moduleUpdateDto)
     {
-        throw new NotImplementedException();
+        var module = await _dbContext.Module.FirstOrDefaultAsync(x => x.Id == id);
+
+        if (module == null)
+        {
+            return null;
+        }
+        UpdateModuleFields(module, moduleUpdateDto);
+        await _dbContext.SaveChangesAsync();
+        return module;
+    }
+
+    private static void UpdateModuleFields(Module module, UpdateModuleRequestDto updateDto)
+    {
+        module.Title = updateDto.Title ?? module.Title;
+        module.Content = updateDto.Content ?? module.Content;
+        module.VideoUrl = updateDto.VideoUrl ?? module.VideoUrl;
     }
 }
