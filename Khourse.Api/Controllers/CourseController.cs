@@ -1,5 +1,6 @@
 using Khourse.Api.Common;
 using Khourse.Api.Dtos.CourseDtos;
+using Khourse.Api.Helpers;
 using Khourse.Api.Mappers;
 using Khourse.Api.Repositories.IRepositories;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,10 @@ public class CourseController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] CourseQueryOject query)
     {
-        var courses = await _courseRepo.GetAllAsync();
-        var courseDto = courses.Select(c => c.ToCourseDto());
-        return OkResponse("Courses fetched successfully", courseDto);
+        var courses = await _courseRepo.GetAllAsync(query);
+        return OkResponse("Courses fetched successfully", courses);
     }
 
     [HttpPost]

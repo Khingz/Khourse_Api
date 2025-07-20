@@ -18,6 +18,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
         {
             NamingStrategy = new Newtonsoft.Json.Serialization.SnakeCaseNamingStrategy()
         };
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     });
 builder.Services.AddCustomValidationResponses();
 builder.Services.AddOpenApi();

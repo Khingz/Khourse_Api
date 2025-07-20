@@ -1,6 +1,9 @@
 using System;
+using Khourse.Api.Common;
 using Khourse.Api.Data;
 using Khourse.Api.Dtos.CourseDtos;
+using Khourse.Api.Helpers;
+using Khourse.Api.Mappers;
 using Khourse.Api.Models;
 using Khourse.Api.Repositories.IRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -11,9 +14,44 @@ public class CourseRepository(AppDbContext dbContext) : ICourseRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
 
-    public async Task<List<Course>> GetAllAsync()
+    public async Task<PaginatedResponse<Course>> GetAllAsync(CourseQueryOject query)
     {
-        return await _dbContext.Course.Include(c => c.Modules).ToListAsync();
+        var courses = _dbContext.Course.Include(c => c.Modules).AsQueryable();
+        if (!string.IsNullOrWhiteSpace(query.Title))
+        {
+            courses = courses.Where(course => EF.Functions.ILike(course.Title, $"%{query.Title}%"));
+        }
+        if (!string.IsNullOrWhiteSpace(query.SortBy))
+        {
+            switch (query.SortBy.ToLower())
+            {
+                case "created_at":
+                    courses = query.IsDecsending
+                        ? courses.OrderByDescending(course => course.CreatedAt)
+                        : courses.OrderBy(course => course.CreatedAt);
+                    break;
+                case "title":
+                    courses = query.IsDecsending
+                        ? courses.OrderByDescending(course => course.Title)
+                        : courses.OrderBy(course => course.Title);
+                    break;
+            }
+        }
+
+        var skipNumber = (query.PageNumber - 1) * query.PageSize;
+        var totalItems = await courses.CountAsync();
+        var result = await courses.OrderByDescending(c => c.CreatedAt).Skip(skipNumber).Take(query.PageSize).ToListAsync();
+        var dtoData = result.Select(c => c.ToCourseDto()).ToList();
+        var response = new PaginatedResponse<Course>
+        {
+            Data = result,
+            CurrentPage = query.PageNumber,
+            PageSize = query.PageSize,
+            TotalItems = totalItems,
+            TotalPages = (int)Math.Ceiling(totalItems / (double)query.PageSize)
+        };
+        return response;
+
     }
 
     public async Task<Course> CreateAsync(Course courseModel)
