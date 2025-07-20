@@ -35,9 +35,13 @@ public class CourseController : BaseController
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById([FromRoute] Guid id)
+    public async Task<IActionResult> GetById([FromRoute] string id)
     {
-        var course = await _courseRepo.GetByIdAsync(id);
+        if (!GuidUtils.TryParse(id, out Guid guid))
+        {
+            return BadRequestResponse("Invalid GUID format.");
+        }
+        var course = await _courseRepo.GetByIdAsync(guid);
         if (course == null)
         {
             return ErrorResponse(404, "Not Found", "Course not found");
@@ -47,9 +51,13 @@ public class CourseController : BaseController
     }
 
     [HttpPatch("{id}")]
-    public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateCourseRequestDto updateDto)
+    public async Task<IActionResult> Update([FromRoute] string id, [FromBody] UpdateCourseRequestDto updateDto)
     {
-        var course = await _courseRepo.UpdateAsync(id, updateDto);
+        if (!GuidUtils.TryParse(id, out Guid guid))
+        {
+            return BadRequestResponse("Invalid GUID format.");
+        }
+        var course = await _courseRepo.UpdateAsync(guid, updateDto);
         if (course == null)
         {
             return ErrorResponse(404, "Not Found", "Course not found");
@@ -58,9 +66,13 @@ public class CourseController : BaseController
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete([FromRoute] Guid id)
+    public async Task<IActionResult> Delete([FromRoute] string id)
     {
-        var course = await _courseRepo.DeleteAsync(id);
+        if (!GuidUtils.TryParse(id, out Guid guid))
+        {
+            return BadRequestResponse("Invalid GUID format.");
+        }
+        var course = await _courseRepo.DeleteAsync(guid);
         if (course == null)
         {
             return ErrorResponse(404, "Not Found", "Course not found");
