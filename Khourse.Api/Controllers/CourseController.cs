@@ -44,7 +44,8 @@ public class CourseController : BaseController
         var course = await _courseRepo.GetByIdAsync(guid);
         if (course == null)
         {
-            return ErrorResponse(404, "Not Found", "Course not found");
+            return NotFoundResponse("Course not found");
+
         }
         return OkResponse("Course feteched successfully", course);
 
@@ -60,7 +61,8 @@ public class CourseController : BaseController
         var course = await _courseRepo.UpdateAsync(guid, updateDto);
         if (course == null)
         {
-            return ErrorResponse(404, "Not Found", "Course not found");
+            return NotFoundResponse("Course not found");
+
         }
         return OkResponse("Course feteched successfully", course);
     }
@@ -75,8 +77,20 @@ public class CourseController : BaseController
         var course = await _courseRepo.DeleteAsync(guid);
         if (course == null)
         {
-            return ErrorResponse(404, "Not Found", "Course not found");
+            return NotFoundResponse("Course not found");
         }
         return OkResponse("Course deleted successfully", course);
+    }
+
+    [HttpGet("{id}/modules")]
+    public async Task<IActionResult> GetCourseModules([FromRoute] string id, [FromQuery] QueryObject query)
+    {
+        if (!GuidUtils.TryParse(id, out Guid guid))
+        {
+            return BadRequestResponse("Invalid Course GUID format.");
+        }
+        var moduleData = await _courseRepo.GetCourseModulesAsync(guid, query);
+        return OkResponse("Courses fetched successfully", moduleData);
+
     }
 }

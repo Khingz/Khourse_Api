@@ -37,7 +37,8 @@ public class ModuleController(IModuleRepository moduleRepo, ICourseRepository co
         var course = await _moduleRepo.GetByIdAsync(guid);
         if (course == null)
         {
-            return ErrorResponse(404, "Not Found", "Module not found");
+            return NotFoundResponse("Course not found");
+
         }
         return OkResponse("Module feteched successfully", course);
 
@@ -61,7 +62,8 @@ public class ModuleController(IModuleRepository moduleRepo, ICourseRepository co
         var module = await _moduleRepo.DeleteAsync(guid);
         if (module == null)
         {
-            return ErrorResponse(404, "Not Found", "Module not found");
+            return NotFoundResponse("Course not found");
+
         }
         return OkResponse("module deleted successfully", module);
     }
@@ -76,7 +78,8 @@ public class ModuleController(IModuleRepository moduleRepo, ICourseRepository co
         var module = await _moduleRepo.UpdateAsync(guid, updateDto);
         if (module == null)
         {
-            return ErrorResponse(404, "Not Found", "Module not found");
+            return NotFoundResponse("Course not found");
+
         }
         return OkResponse("Module feteched successfully", module);
     }

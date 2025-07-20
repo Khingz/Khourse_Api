@@ -2,6 +2,7 @@ using System;
 using Khourse.Api.Common;
 using Khourse.Api.Data;
 using Khourse.Api.Dtos.CourseDtos;
+using Khourse.Api.Dtos.ModuleDtos;
 using Khourse.Api.Helpers;
 using Khourse.Api.Mappers;
 using Khourse.Api.Models;
@@ -14,7 +15,7 @@ public class CourseRepository(AppDbContext dbContext) : ICourseRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
 
-    public async Task<PaginatedResponse<Course>> GetAllAsync(CourseQueryOject query)
+    public async Task<PaginatedResponse<CourseDto>> GetAllAsync(CourseQueryOject query)
     {
         var courses = _dbContext.Course.Include(c => c.Modules).AsQueryable();
         if (!string.IsNullOrWhiteSpace(query.Title))
@@ -42,9 +43,9 @@ public class CourseRepository(AppDbContext dbContext) : ICourseRepository
         var totalItems = await courses.CountAsync();
         var result = await courses.OrderByDescending(c => c.CreatedAt).Skip(skipNumber).Take(query.PageSize).ToListAsync();
         var dtoData = result.Select(c => c.ToCourseDto()).ToList();
-        var response = new PaginatedResponse<Course>
+        var response = new PaginatedResponse<CourseDto>
         {
-            Data = result,
+            Data = dtoData,
             CurrentPage = query.PageNumber,
             PageSize = query.PageSize,
             TotalItems = totalItems,
@@ -104,5 +105,32 @@ public class CourseRepository(AppDbContext dbContext) : ICourseRepository
         await _dbContext.SaveChangesAsync();
         return course;
 
+    }
+
+    public async Task<PaginatedResponse<ModuleDto>> GetCourseModulesAsync(Guid courseId, QueryObject queryObj)
+    {
+        var query = _dbContext.Module
+        .Where(m => m.CourseId == courseId);
+
+        var totalItems = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling(totalItems / (double)queryObj.PageSize);
+        var skipNumber = (queryObj.PageNumber - 1) * queryObj.PageSize;
+
+        var modules = await query
+            .OrderByDescending(c => c.CreatedAt)
+            .Skip(skipNumber)
+            .Take(queryObj.PageSize)
+            .ToListAsync();
+
+        var dtoData = modules.Select(c => c.ToModuleDto()).ToList();
+        var response = new PaginatedResponse<ModuleDto>
+        {
+            Data = dtoData,
+            CurrentPage = queryObj.PageNumber,
+            PageSize = queryObj.PageSize,
+            TotalItems = totalItems,
+            TotalPages = totalPages
+        };
+        return response;
     }
 }
