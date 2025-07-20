@@ -32,6 +32,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connect
 
 // Register other services
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+builder.Services.AddScoped<IModuleRepository, ModuleRepository>();
 
 // Register API Versioning 
 builder.Services.AddApiVersioning(options =>

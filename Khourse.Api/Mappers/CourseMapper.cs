@@ -16,6 +16,8 @@ public static class CourseMapper
             ThumbnailUrl = course.ThumbnailUrl,
             Author = course.Author,
             IsPublished = course.IsPublished,
+            CreatedAt = course.CreatedAt,
+            UpdatedAt = course.UpdatedAt ?? DateTime.UtcNow,
             Modules = [.. course.Modules.Select(c => c.ToModuleDto())]
         };
     }

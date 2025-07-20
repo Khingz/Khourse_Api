@@ -7,14 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Khourse.Api.Repositories;
 
-public class CourseRepository : ICourseRepository
+public class CourseRepository(AppDbContext dbContext) : ICourseRepository
 {
-    private readonly AppDbContext _dbContext;
+    private readonly AppDbContext _dbContext = dbContext;
 
-    public CourseRepository(AppDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
     public async Task<List<Course>> GetAllAsync()
     {
         return await _dbContext.Course.Include(c => c.Modules).ToListAsync();
@@ -32,7 +28,7 @@ public class CourseRepository : ICourseRepository
         return await _dbContext.Course.Include(c => c.Modules).FirstOrDefaultAsync(i => i.Id == id);
     }
 
-    public Task<bool> StockExists(Guid id)
+    public Task<bool> CourseExists(Guid id)
     {
         return _dbContext.Course.AnyAsync(s => s.Id == id);
     }
