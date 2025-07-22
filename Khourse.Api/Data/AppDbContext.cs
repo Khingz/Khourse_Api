@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Khourse.Api.Data;
 
 using Khourse.Api.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<AppUser>(options)
 {
     public DbSet<Module> Module => Set<Module>();
     public DbSet<Course> Course => Set<Course>();
@@ -31,5 +31,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
         return await base.SaveChangesAsync(cancellationToken);
     }
- 
+
 }
