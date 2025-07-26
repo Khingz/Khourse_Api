@@ -19,11 +19,11 @@ public class ModuleController(IModuleRepository moduleRepo, ICourseRepository co
         Guid courseId = module.CourseId!.Value;
         if (!await _courseRepo.CourseExists(courseId))
         {
-            return BadRequestResponse("Course does not exist");
+            throw new BadHttpRequestException("");
         }
         var moduleModel = module.ToModuleEntity();
         await _moduleRepo.CreateAsync(moduleModel);
-        var response = ApiResponse<ModuleDto>.Ok("Module created successfully", moduleModel.ToModuleDto());
+        var response = ApiSuccessResponse<ModuleDto>.Ok(moduleModel.ToModuleDto(), "Module created successfully");
         return CreatedAtAction(nameof(GetById), new { id = moduleModel.Id }, response);
     }
 
@@ -32,14 +32,10 @@ public class ModuleController(IModuleRepository moduleRepo, ICourseRepository co
     {
         if (!GuidUtils.TryParse(id, out Guid guid))
         {
-            return BadRequestResponse("Invalid GUID format.");
-        }
-        var course = await _moduleRepo.GetByIdAsync(guid);
-        if (course == null)
-        {
-            return NotFoundResponse("Course not found");
+            throw new BadHttpRequestException("Invalid Id format!");
 
         }
+        var course = await _moduleRepo.GetByIdAsync(guid);
         return OkResponse("Module feteched successfully", course);
 
     }
@@ -57,14 +53,10 @@ public class ModuleController(IModuleRepository moduleRepo, ICourseRepository co
     {
         if (!GuidUtils.TryParse(id, out Guid guid))
         {
-            return BadRequestResponse("Invalid GUID format.");
-        }
-        var module = await _moduleRepo.DeleteAsync(guid);
-        if (module == null)
-        {
-            return NotFoundResponse("Course not found");
+            throw new BadHttpRequestException("Invalid Id format!");
 
         }
+        var module = await _moduleRepo.DeleteAsync(guid);
         return OkResponse("module deleted successfully", module);
     }
 
@@ -73,14 +65,10 @@ public class ModuleController(IModuleRepository moduleRepo, ICourseRepository co
     {
         if (!GuidUtils.TryParse(id, out Guid guid))
         {
-            return BadRequestResponse("Invalid GUID format.");
-        }
-        var module = await _moduleRepo.UpdateAsync(guid, updateDto);
-        if (module == null)
-        {
-            return NotFoundResponse("Course not found");
+            throw new BadHttpRequestException("Invalid Id format!");
 
         }
+        var module = await _moduleRepo.UpdateAsync(guid, updateDto);
         return OkResponse("Module feteched successfully", module);
     }
 }

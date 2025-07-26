@@ -1,4 +1,5 @@
 using Khourse.Api.Dtos.Account;
+using Khourse.Api.Exceptions;
 using Khourse.Api.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,13 +19,13 @@ public class AccountController(IAccountService accountService) : BaseController
 
         if (!success)
         {
-            // return InternalServerErrorResponse("Something went wrong");
-            return BadRequest(new
-            {
-                success = false,
-                message = "Validation failed",
-                errors = errors.Select(e => new { e.Code, e.Description })
-            });
+            throw new IdentityErrorException(errors);
+        //     return BadRequest(new
+        //     {
+        //         success = false,
+        //         message = "Validation failed",
+        //         errors = errors.Select(e => new { e.Code, e.Description })
+        //     });
         }
         return OkResponse("User created successfully", user);
 

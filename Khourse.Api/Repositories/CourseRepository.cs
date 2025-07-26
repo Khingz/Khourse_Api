@@ -64,7 +64,8 @@ public class CourseRepository(AppDbContext dbContext) : ICourseRepository
 
     public async Task<Course?> GetByIdAsync(Guid id)
     {
-        return await _dbContext.Course.Include(c => c.Modules).FirstOrDefaultAsync(i => i.Id == id);
+        var course = await _dbContext.Course.Include(c => c.Modules).FirstOrDefaultAsync(i => i.Id == id);
+        return course;
     }
 
     public Task<bool> CourseExists(Guid id)
@@ -82,12 +83,7 @@ public class CourseRepository(AppDbContext dbContext) : ICourseRepository
 
     public async Task<Course?> UpdateAsync(Guid id, UpdateCourseRequestDto courseUpdateDto)
     {
-        var course = await _dbContext.Course.FirstOrDefaultAsync(x => x.Id == id);
-
-        if (course == null)
-        {
-            return null;
-        }
+        var course = await _dbContext.Course.FirstOrDefaultAsync(x => x.Id == id) ?? throw new KeyNotFoundException("Course not found!");
         UpdateCourseFields(course, courseUpdateDto);
         await _dbContext.SaveChangesAsync();
         return course;
@@ -95,12 +91,7 @@ public class CourseRepository(AppDbContext dbContext) : ICourseRepository
 
     public async Task<Course?> DeleteAsync(Guid id)
     {
-        var course = await _dbContext.Course.FirstOrDefaultAsync(x => x.Id == id);
-
-        if (course == null)
-        {
-            return null;
-        }
+        var course = await _dbContext.Course.FirstOrDefaultAsync(x => x.Id == id) ?? throw new KeyNotFoundException("Course not found!");
         _dbContext.Course.Remove(course);
         await _dbContext.SaveChangesAsync();
         return course;

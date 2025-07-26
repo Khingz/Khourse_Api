@@ -19,8 +19,8 @@ public class AccountService(IAccountRepository accountRepo, ITokenService tokenS
         {
             Email = userDto.Email,
             UserName = userDto.Email,
-            Firstname = userDto.Firstname,
-            Lastname = userDto.Lastname
+            Firstname = userDto.FirstName,
+            Lastname = userDto.LastName
         };
 
         var result = await _accountRepo.CreateUserAsync(user, userDto.Password!);

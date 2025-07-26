@@ -15,7 +15,7 @@ public class Course : BaseModel
     public string ThumbnailUrl { get; set; } = String.Empty;
 
     [Column("author")]
-    public User? Author { get; set; }
+    public AppUser? Author { get; set; }
 
     [Column("is_published")]
     public bool IsPublished { get; set; } = false;

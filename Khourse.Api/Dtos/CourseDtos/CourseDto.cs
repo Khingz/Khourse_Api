@@ -12,7 +12,7 @@ public class CourseDto
 
     public string ThumbnailUrl { get; set; } = string.Empty;
 
-    public User? Author { get; set; }
+    public AppUser? Author { get; set; }
 
     public bool IsPublished { get; set; }
 

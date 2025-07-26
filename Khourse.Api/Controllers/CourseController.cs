@@ -30,7 +30,7 @@ public class CourseController : BaseController
     {
         var courseModel = courseDto.ToCourseEntity();
         await _courseRepo.CreateAsync(courseModel);
-        var response = ApiResponse<CourseDto>.Ok("Course created successfully", courseModel.ToCourseDto());
+        var response = ApiSuccessResponse<CourseDto>.Ok(courseModel.ToCourseDto(), "Course created successfully");
         return CreatedAtAction(nameof(GetById), new { id = courseModel.Id }, response);
     }
 
@@ -39,14 +39,9 @@ public class CourseController : BaseController
     {
         if (!GuidUtils.TryParse(id, out Guid guid))
         {
-            return BadRequestResponse("Invalid GUID format.");
+            throw new BadHttpRequestException("Invalid Id format!");
         }
         var course = await _courseRepo.GetByIdAsync(guid);
-        if (course == null)
-        {
-            return NotFoundResponse("Course not found");
-
-        }
         return OkResponse("Course feteched successfully", course);
 
     }
@@ -56,14 +51,9 @@ public class CourseController : BaseController
     {
         if (!GuidUtils.TryParse(id, out Guid guid))
         {
-            return BadRequestResponse("Invalid GUID format.");
+            throw new BadHttpRequestException("Invalid Id format!");
         }
         var course = await _courseRepo.UpdateAsync(guid, updateDto);
-        if (course == null)
-        {
-            return NotFoundResponse("Course not found");
-
-        }
         return OkResponse("Course feteched successfully", course);
     }
 
@@ -72,13 +62,9 @@ public class CourseController : BaseController
     {
         if (!GuidUtils.TryParse(id, out Guid guid))
         {
-            return BadRequestResponse("Invalid GUID format.");
+            throw new BadHttpRequestException("Invalid Id format!");
         }
         var course = await _courseRepo.DeleteAsync(guid);
-        if (course == null)
-        {
-            return NotFoundResponse("Course not found");
-        }
         return OkResponse("Course deleted successfully", course);
     }
 
@@ -87,10 +73,10 @@ public class CourseController : BaseController
     {
         if (!GuidUtils.TryParse(id, out Guid guid))
         {
-            return BadRequestResponse("Invalid Course GUID format.");
+            throw new BadHttpRequestException("Invalid Id format!");
+
         }
         var moduleData = await _courseRepo.GetCourseModulesAsync(guid, query);
         return OkResponse("Courses fetched successfully", moduleData);
-
     }
 }

@@ -4,16 +4,16 @@ namespace Khourse.Api.Dtos.Account;
 
 public class RegisterDto
 {
-    [Required(ErrorMessage = "Email is required")]
+    [Required(ErrorMessage = "email is required")]
     [EmailAddress(ErrorMessage = "Please use a valid email address")]
     public string? Email { get; set; }
 
-    [Required(ErrorMessage = "Firstname is required")]
-    public string? Firstname { get; set; }
+    [Required(ErrorMessage = "first_name is required")]
+    public string? FirstName { get; set; }
 
-    [Required(ErrorMessage = "Lastname is required")]
-    public string? Lastname { get; set; }
+    [Required(ErrorMessage = "last_name is required")]
+    public string? LastName { get; set; }
 
-    [Required(ErrorMessage = "Password is required")]
+    [Required(ErrorMessage = "password is required")]
     public string? Password { get; set; }
 }

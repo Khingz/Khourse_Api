@@ -1,6 +1,7 @@
 using DotNetEnv;
 using Khourse.Api.Data;
 using Khourse.Api.Extensions;
+using Khourse.Api.Middlewares;
 using Khourse.Api.Models;
 using Khourse.Api.Repositories;
 using Khourse.Api.Repositories.IRepositories;
@@ -123,4 +124,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCustomMethodNotFoundHandler();
 app.MapControllers();
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.Run();
