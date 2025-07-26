@@ -16,7 +16,7 @@ public class ApiErrorResponse
             Success = false,
             StatusCode = statusCode,
             Message = message,
-            Errors = errors ?? new List<ErrorDetail>()
+            Errors = errors ?? []
         };
     }
 }

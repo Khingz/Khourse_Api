@@ -1,4 +1,5 @@
 using DotNetEnv;
+using Khourse.Api.Common;
 using Khourse.Api.Data;
 using Khourse.Api.Extensions;
 using Khourse.Api.Middlewares;
@@ -27,11 +28,8 @@ var config = builder.Configuration;
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
-        // Converts response data to snake case
-        options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
-        {
-            NamingStrategy = new Newtonsoft.Json.Serialization.SnakeCaseNamingStrategy()
-        };
+        // Converts response data to snake case ==> we are using a resuable JsonConfig class
+        options.SerializerSettings.ContractResolver = JsonConfig.SnakeCaseSettings.ContractResolver;
         
         // Ignores reference loops
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;

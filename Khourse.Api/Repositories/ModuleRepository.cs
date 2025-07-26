@@ -20,7 +20,7 @@ public class ModuleRepository(AppDbContext dbContext) : IModuleRepository
 
     public async Task<Module?> DeleteAsync(Guid id)
     {
-        var module = await _dbContext.Module.FirstOrDefaultAsync(x => x.Id == id) ?? throw new KeyNotFoundException("Course not found!");
+        var module = await _dbContext.Module.FirstOrDefaultAsync(x => x.Id == id) ?? throw new KeyNotFoundException("Module not found!");
         _dbContext.Module.Remove(module);
         await _dbContext.SaveChangesAsync();
         return module;
@@ -33,13 +33,13 @@ public class ModuleRepository(AppDbContext dbContext) : IModuleRepository
 
     public async Task<Module?> GetByIdAsync(Guid id)
     {
-        var module = await _dbContext.Module.FirstOrDefaultAsync(i => i.Id == id) ?? throw new KeyNotFoundException("Course not found!");
+        var module = await _dbContext.Module.FirstOrDefaultAsync(i => i.Id == id) ?? throw new KeyNotFoundException("Module not found!");
         return module;
     }
 
     public async Task<Module?> UpdateAsync(Guid id, UpdateModuleRequestDto moduleUpdateDto)
     {
-        var module = await _dbContext.Module.FirstOrDefaultAsync(x => x.Id == id) ?? throw new KeyNotFoundException("Course not found!");
+        var module = await _dbContext.Module.FirstOrDefaultAsync(x => x.Id == id) ?? throw new KeyNotFoundException("Module not found!");
         UpdateModuleFields(module, moduleUpdateDto);
         await _dbContext.SaveChangesAsync();
         return module;

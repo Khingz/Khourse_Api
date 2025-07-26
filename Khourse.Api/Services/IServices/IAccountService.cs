@@ -6,6 +6,7 @@ namespace Khourse.Api.Services.IServices;
 
 public interface IAccountService
 {
-    Task<(bool Success, AuthUserDto User, IEnumerable<IdentityError> Errors)> RegisterAccount(RegisterDto userDto);
+    Task<AuthUserDto> RegisterAccount(RegisterDto userDto);
+    Task<AuthUserDto> LoginAccount(LoginDto loginDto);
 
 }

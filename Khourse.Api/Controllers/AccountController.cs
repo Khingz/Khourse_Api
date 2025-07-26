@@ -15,19 +15,14 @@ public class AccountController(IAccountService accountService) : BaseController
     [HttpPost("register")]
     public async Task<IActionResult> Signup([FromBody] RegisterDto registerDto)
     {
-        var (success, user, errors) = await _accountService.RegisterAccount(registerDto);
-
-        if (!success)
-        {
-            throw new IdentityErrorException(errors);
-        //     return BadRequest(new
-        //     {
-        //         success = false,
-        //         message = "Validation failed",
-        //         errors = errors.Select(e => new { e.Code, e.Description })
-        //     });
-        }
+        var user = await _accountService.RegisterAccount(registerDto);
         return OkResponse("User created successfully", user);
+    }
 
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+    {
+        var user = await _accountService.LoginAccount(loginDto);
+        return OkResponse("User logged in successfully", user);
     }
 }

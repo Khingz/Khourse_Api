@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
                         Errors = entry.Value!.Errors.Select(e => e.ErrorMessage)
                     });
 
-                return new BadRequestObjectResult(new
+                return new UnprocessableEntityObjectResult(new
                 {
                     Success = false,
                     Message = "Validation failed",

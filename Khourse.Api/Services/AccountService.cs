@@ -1,5 +1,6 @@
 using System;
 using Khourse.Api.Dtos.Account;
+using Khourse.Api.Exceptions;
 using Khourse.Api.Mappers;
 using Khourse.Api.Models;
 using Khourse.Api.Repositories.IRepositories;
@@ -13,7 +14,7 @@ public class AccountService(IAccountRepository accountRepo, ITokenService tokenS
     private readonly IAccountRepository _accountRepo = accountRepo;
     private readonly ITokenService _tokenService = tokenService;
 
-    public async Task<(bool Success, AuthUserDto User, IEnumerable<IdentityError> Errors)> RegisterAccount(RegisterDto userDto)
+    public async Task<AuthUserDto> RegisterAccount(RegisterDto userDto)
     {
         var user = new AppUser
         {
@@ -25,16 +26,25 @@ public class AccountService(IAccountRepository accountRepo, ITokenService tokenS
 
         var result = await _accountRepo.CreateUserAsync(user, userDto.Password!);
         if (!result.Succeeded)
-            return (false, null, result.Errors)!;
+            throw new IdentityErrorException(result.Errors);
 
         var roleResult = await _accountRepo.AddUserToRoleAsync(user, "Student");
         if (!roleResult.Succeeded)
-            return (false, null, roleResult.Errors)!;
+            throw new IdentityErrorException(roleResult.Errors);
 
         var token = await _tokenService.CreateToken(user);
 
         var newUser = user.ToAuthUserDto(token);
 
-        return (true, newUser, null)!;
+        return newUser;
+    }
+
+    public async Task<AuthUserDto> LoginAccount(LoginDto loginDto)
+    {
+        var user = await _accountRepo.LoginUserAsync(loginDto);
+        var token = await _tokenService.CreateToken(user);
+
+        var loggedInUser = user.ToAuthUserDto(token);
+        return loggedInUser;
     }
 }

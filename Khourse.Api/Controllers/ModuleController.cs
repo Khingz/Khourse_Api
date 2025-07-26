@@ -57,7 +57,7 @@ public class ModuleController(IModuleRepository moduleRepo, ICourseRepository co
 
         }
         var module = await _moduleRepo.DeleteAsync(guid);
-        return OkResponse("module deleted successfully", module);
+        return OkResponse("Module deleted successfully", module);
     }
 
     [HttpPatch("{id}")]
@@ -69,6 +69,6 @@ public class ModuleController(IModuleRepository moduleRepo, ICourseRepository co
 
         }
         var module = await _moduleRepo.UpdateAsync(guid, updateDto);
-        return OkResponse("Module feteched successfully", module);
+        return OkResponse("Module updated successfully", module);
     }
 }

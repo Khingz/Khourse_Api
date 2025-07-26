@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Khourse.Api.Common;
 using Khourse.Api.Exceptions;
+using Newtonsoft.Json;
 
 namespace Khourse.Api.Middlewares;
 
@@ -46,8 +47,10 @@ public class GlobalExceptionHandlerMiddleware(RequestDelegate next, ILogger<Glob
                 );
             }
 
-            var result = JsonSerializer.Serialize(errorResponse);
-            await context.Response.WriteAsync(result);
+            // var result = JsonSerializer.Serialize(errorResponse);
+            // convert error response so as to newton globa settings
+            var json = JsonConvert.SerializeObject(errorResponse, JsonConfig.SnakeCaseSettings);
+            await context.Response.WriteAsync(json);
         }
     }
 
