@@ -1,5 +1,6 @@
 using DotNetEnv;
 using Khourse.Api.Common;
+using Khourse.Api.Configs;
 using Khourse.Api.Data;
 using Khourse.Api.Extensions;
 using Khourse.Api.Middlewares;
@@ -7,6 +8,8 @@ using Khourse.Api.Models;
 using Khourse.Api.Repositories;
 using Khourse.Api.Repositories.IRepositories;
 using Khourse.Api.Services;
+using Khourse.Api.Services.Email;
+using Khourse.Api.Services.Email.IEmail;
 using Khourse.Api.Services.IServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -18,11 +21,16 @@ Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Merge env variables into Iconfiguration
-builder.Configuration.AddEnvironmentVariables();
 
-// Variab;e that hols builder config
+// Variable that hols builder config
 var config = builder.Configuration;
+
+// Merge env variables into Iconfiguration
+config.AddJsonFile("appsettings.json", optional: true)
+        .AddEnvironmentVariables();
+
+// Maps smtp values in env/appsettings.json into SmtpSettings class to be available for DI
+builder.Services.Configure<SmtpSettings>(config.GetSection("Smtp"));
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -30,7 +38,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
         // Converts response data to snake case ==> we are using a resuable JsonConfig class
         options.SerializerSettings.ContractResolver = JsonConfig.SnakeCaseSettings.ContractResolver;
-        
+
         // Ignores reference loops
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     });
@@ -87,6 +95,10 @@ builder.Services.AddScoped<IModuleRepository, ModuleRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddSingleton<IEmailQueue, EmailQueue>();
+builder.Services.AddHostedService<EmailBackgroundService>();
+
 
 // Register API Versioning 
 builder.Services.AddApiVersioning(options =>

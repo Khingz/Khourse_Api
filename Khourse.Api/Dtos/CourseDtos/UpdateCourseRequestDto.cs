@@ -1,5 +1,3 @@
-using System;
-
 namespace Khourse.Api.Dtos.CourseDtos;
 
 public class UpdateCourseRequestDto

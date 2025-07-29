@@ -1,11 +1,9 @@
-using System;
 using Khourse.Api.Dtos.Account;
 using Khourse.Api.Exceptions;
 using Khourse.Api.Mappers;
 using Khourse.Api.Models;
 using Khourse.Api.Repositories.IRepositories;
 using Khourse.Api.Services.IServices;
-using Microsoft.AspNetCore.Identity;
 
 namespace Khourse.Api.Services;
 

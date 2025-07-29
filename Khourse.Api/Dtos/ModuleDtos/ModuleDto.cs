@@ -1,5 +1,3 @@
-using System;
-
 namespace Khourse.Api.Dtos.ModuleDtos;
 
 public class ModuleDto

@@ -1,5 +1,4 @@
 using Khourse.Api.Common;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Khourse.Api.Controllers;

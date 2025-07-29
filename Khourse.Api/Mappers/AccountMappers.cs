@@ -1,4 +1,3 @@
-using System;
 using Khourse.Api.Dtos.Account;
 using Khourse.Api.Models;
 

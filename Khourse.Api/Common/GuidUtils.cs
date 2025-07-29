@@ -1,5 +1,3 @@
-using System;
-
 namespace Khourse.Api.Common;
 
 public static class GuidUtils

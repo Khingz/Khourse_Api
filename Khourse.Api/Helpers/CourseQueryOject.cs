@@ -1,5 +1,3 @@
-using System;
-
 namespace Khourse.Api.Helpers;
 
 public class CourseQueryOject

@@ -1,4 +1,3 @@
-using System;
 using Khourse.Api.Models;
 
 namespace Khourse.Api.Services.IServices;

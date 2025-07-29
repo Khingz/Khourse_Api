@@ -1,4 +1,3 @@
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -31,7 +30,8 @@ public class TokenService : ITokenService
         // Get user role to add to claim ==> returns a list of roles and all roles are added to claim
         var roles = await _userManager.GetRolesAsync(user);
 
-        // create claim to be added to the token
+
+        // create claim to be added to the token ==> this adds email, id and user role
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Email, user.Email!),
