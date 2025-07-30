@@ -6,6 +6,7 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
+using RazorLight;
 
 namespace Khourse.Api.Services.Email;
 
@@ -13,20 +14,25 @@ public class EmailService(IOptions<SmtpSettings> option) : IEmailService
 {
     private readonly SmtpSettings _smtp = option.Value;
 
-    public void SendEmail(EmailDto emailDto)
+    public async Task SendEmailAsync(EmailDto emailDto)
     {
+        var templatesPath = Path.Combine(Directory.GetCurrentDirectory(), "Services", "Email", "Templates");
+        var engine = new RazorLightEngineBuilder().UseFileSystemProject(templatesPath).UseMemoryCachingProvider().Build();
+
+        var body = await engine.CompileRenderAsync(emailDto.TemplateName, emailDto.Model);
+
         var message = new MimeMessage();
         message.From.Add(MailboxAddress.Parse(_smtp.From));
         message.To.Add(MailboxAddress.Parse(emailDto.To));
         message.Subject = emailDto.Subject;
-        message.Body = new TextPart(TextFormat.Html) { Text = emailDto.Body };
+        message.Body = new TextPart(TextFormat.Html) { Text = body};
         var smtp = new SmtpClient();
 
         try
         {
-            smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-            smtp.Authenticate(_smtp.Username, _smtp.Password);
-            smtp.Send(message);
+            await smtp.ConnectAsync(_smtp.Host, _smtp.Port, SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync(_smtp.Username, _smtp.Password);
+            await smtp.SendAsync(message);
         }
         catch (Exception ex)
         {
@@ -34,7 +40,7 @@ public class EmailService(IOptions<SmtpSettings> option) : IEmailService
         }
         finally
         {
-            smtp.Disconnect(true);
+            await smtp.DisconnectAsync(true);
             smtp.Dispose();
         }
     }

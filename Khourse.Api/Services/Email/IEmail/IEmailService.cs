@@ -5,5 +5,5 @@ namespace Khourse.Api.Services.Email.IEmail;
 
 public interface IEmailService
 {
-    void SendEmail(EmailDto emailDto);
+    Task SendEmailAsync(EmailDto emailDto);
 }

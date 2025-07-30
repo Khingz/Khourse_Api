@@ -15,7 +15,7 @@ public class EmailBackgroundService(IEmailQueue queue, IServiceProvider serviceP
             var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
             try
             {
-                emailService.SendEmail(email);
+                await emailService.SendEmailAsync(email);
             }
             catch (Exception ex)
             {

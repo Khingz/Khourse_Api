@@ -43,8 +43,12 @@ public class AccountController(IAccountService accountService, IOptions<SmtpSett
         var message = new EmailDto
         {
             To = "soniacriag231@gmail.com",
-            Subject = "Hello World",
-            Body = "<p>This is a god way to start life!!</p>"
+            Subject = "Welcome to Khourse",
+            TemplateName = "Welcome.cshtml",
+            Model = new
+            {
+                Name = "Khingz"
+            }
         };
         await _emailQueue.QueueEmailAsync(message);
         return Ok(new
