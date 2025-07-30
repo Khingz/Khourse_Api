@@ -28,14 +28,6 @@ build_property._RazorSourceGeneratorDebug =
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
-[/home/khingz/Documents/GOD OF SHINOBI/CSharp/Khourse/Khourse.Api/Services/Email/Templates/Layouts/_Footer.cshtml]
-build_metadata.AdditionalFiles.TargetPath = U2VydmljZXMvRW1haWwvVGVtcGxhdGVzL0xheW91dHMvX0Zvb3Rlci5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[/home/khingz/Documents/GOD OF SHINOBI/CSharp/Khourse/Khourse.Api/Services/Email/Templates/Layouts/_Header.cshtml]
-build_metadata.AdditionalFiles.TargetPath = U2VydmljZXMvRW1haWwvVGVtcGxhdGVzL0xheW91dHMvX0hlYWRlci5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
 [/home/khingz/Documents/GOD OF SHINOBI/CSharp/Khourse/Khourse.Api/Services/Email/Templates/Welcome.cshtml]
 build_metadata.AdditionalFiles.TargetPath = U2VydmljZXMvRW1haWwvVGVtcGxhdGVzL1dlbGNvbWUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 

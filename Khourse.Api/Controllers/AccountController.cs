@@ -47,7 +47,8 @@ public class AccountController(IAccountService accountService, IOptions<SmtpSett
             TemplateName = "Welcome.cshtml",
             Model = new
             {
-                Name = "Khingz"
+                Name = "Khingz",
+                ActionUrl = "#"
             }
         };
         await _emailQueue.QueueEmailAsync(message);
