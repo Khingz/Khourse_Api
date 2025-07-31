@@ -1,3 +1,4 @@
+using Khourse.Api.Common;
 using Khourse.Api.Configs;
 using Khourse.Api.Dtos;
 using Khourse.Api.Dtos.Account;
@@ -16,17 +17,28 @@ namespace Khourse.Api.Controllers;
 
 [ApiVersion("1.0")]
 [Route("api/{version:apiVersion}/accounts")]
-public class AccountController(IAccountService accountService, IOptions<SmtpSettings> options, IEmailQueue emailQueue) : BaseController
+public class AccountController(IAccountService accountService, IEmailQueue emailQueue) : BaseController
 {
 
     private readonly IAccountService _accountService = accountService;
-    private readonly SmtpSettings _smtp = options.Value;
     private readonly IEmailQueue _emailQueue = emailQueue;
 
     [HttpPost("register")]
     public async Task<IActionResult> Signup([FromBody] RegisterDto registerDto)
     {
         var user = await _accountService.RegisterAccount(registerDto);
+        var message = new EmailDto
+        {
+            To = registerDto.Email!,
+            Subject = "Welcome to Khourse",
+            TemplateName = "Welcome.cshtml",
+            Model = new
+            {
+                Name = registerDto.FirstName,
+                ActionUrl = "#"
+            }
+        };
+        await _emailQueue.QueueEmailAsync(message);
         return OkResponse("User created successfully", user);
     }
 
@@ -37,28 +49,25 @@ public class AccountController(IAccountService accountService, IOptions<SmtpSett
         return OkResponse("User logged in successfully", user);
     }
 
-    [HttpGet("debug/smtp")]
-    public async Task<IActionResult> GetSmtpSettings([FromServices] IOptions<SmtpSettings> smtpOptions)
+    [HttpPatch("update_role/{userId}")]
+    public async Task<IActionResult> UpdateUserRole([FromRoute] string userId, [FromBody] UpdateRoleDto roleDto)
     {
-        var message = new EmailDto
+        if (!GuidUtils.TryParse(userId, out Guid guid))
         {
-            To = "soniacriag231@gmail.com",
-            Subject = "Welcome to Khourse",
-            TemplateName = "Welcome.cshtml",
-            Model = new
-            {
-                Name = "Khingz",
-                ActionUrl = "#"
-            }
-        };
-        await _emailQueue.QueueEmailAsync(message);
-        return Ok(new
+            throw new BadHttpRequestException("Invalid Id format!");
+        }
+        await _accountService.UpdateUserRole(roleDto, userId);
+        return Ok("Role updated");
+    }
+
+    [HttpGet("{userId}")]
+    public async Task<IActionResult> GetUserById([FromRoute] string userId)
+    {
+        if (!GuidUtils.TryParse(userId, out Guid guid))
         {
-            _smtp.Host,
-            _smtp.Port,
-            _smtp.Username,
-            _smtp.From,
-            _smtp.Password
-        });
+            throw new BadHttpRequestException("Invalid Id format!");
+        }
+        var user = await _accountService.GetUserById(userId);
+        return OkResponse("User fetched successfully", user);
     }
 }

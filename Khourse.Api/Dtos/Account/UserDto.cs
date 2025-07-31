@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace Khourse.Api.Dtos.Account;
 
 public class UserDto
@@ -8,4 +10,5 @@ public class UserDto
     public string? Firstname { get; set; }
 
     public string? Lastname { get; set; }
+    public IList<string> Roles { get; set; } = [];
 }

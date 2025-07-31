@@ -1,15 +1,17 @@
 using Khourse.Api.Dtos.Account;
 using Khourse.Api.Models;
 using Khourse.Api.Repositories.IRepositories;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Khourse.Api.Repositories;
 
-public class AccountRepository(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : IAccountRepository
+public class AccountRepository(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<IdentityRole> roleManager) : IAccountRepository
 {
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly SignInManager<AppUser> _signInManager = signInManager;
+    private readonly RoleManager<IdentityRole> _roleManager = roleManager;
 
     public async Task<IdentityResult> CreateUserAsync(AppUser user, string password)
     {
@@ -19,6 +21,29 @@ public class AccountRepository(UserManager<AppUser> userManager, SignInManager<A
     public async Task<IdentityResult> AddUserToRoleAsync(AppUser user, string role)
     {
         return await _userManager.AddToRoleAsync(user, role);
+    }
+
+    public async Task<IList<string>> GetUserRolesAsync(AppUser user)
+    {
+        return await _userManager.GetRolesAsync(user);
+    }
+
+    public async Task<bool> UpdateRoleAsync(string userId, UpdateRoleDto roleDto)
+    {
+        var roleExists = await _roleManager.RoleExistsAsync(roleDto.NewRole!);
+        if (!roleExists)
+            throw new BadHttpRequestException($"Role '{roleDto.NewRole}' does not exist.");
+        var user = await UserByIdAsync(userId) ?? throw new KeyNotFoundException("User not found");
+        var currentRoles = await GetUserRolesAsync(user);
+        var targetRole = currentRoles.FirstOrDefault(r => r == roleDto.OldRole) ?? throw new BadHttpRequestException($"User is not a {roleDto.OldRole}");
+        var removeRole = await _userManager.RemoveFromRoleAsync(user, targetRole) ?? throw new BadHttpRequestException("Failed to remove current role");
+        var addRoleResult = await AddUserToRoleAsync(user, roleDto.NewRole!);
+        if (!addRoleResult.Succeeded)
+        {
+            await AddUserToRoleAsync(user, targetRole);
+            throw new BadHttpRequestException("Failed to assign new role; original role restored");
+        }
+        return true;
     }
 
     public async Task<AppUser?> UserByEmailAsync(string email)

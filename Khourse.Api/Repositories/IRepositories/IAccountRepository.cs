@@ -11,4 +11,6 @@ public interface IAccountRepository
     Task<AppUser> LoginUserAsync(LoginDto loginDto);
     Task<AppUser?> UserByIdAsync(string id);
     Task<AppUser?> UserByEmailAsync(string email);
+    Task<IList<string>> GetUserRolesAsync(AppUser user);
+    Task<bool> UpdateRoleAsync(string userId, UpdateRoleDto roleDto);
 }
