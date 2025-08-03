@@ -9,5 +9,9 @@ public class AppUser : IdentityUser
     public string? Firstname { get; set; }
     [Column("last_name")]
     public string? Lastname { get; set; }
+    [Column("authored_courses")]
+    public ICollection<Course> AuthoredCourses { get; set; } = [];
+    public UserProfleSettings? UserProfile { get; set; }
+    public ICollection<CourseEnrollment> CourseEnrollments { get; set; } = [];
 
 }

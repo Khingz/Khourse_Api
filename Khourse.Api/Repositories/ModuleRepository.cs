@@ -47,7 +47,5 @@ public class ModuleRepository(AppDbContext dbContext) : IModuleRepository
     private static void UpdateModuleFields(Module module, UpdateModuleRequestDto updateDto)
     {
         module.Title = updateDto.Title ?? module.Title;
-        module.Content = updateDto.Content ?? module.Content;
-        module.VideoUrl = updateDto.VideoUrl ?? module.VideoUrl;
     }
 }

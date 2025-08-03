@@ -121,6 +121,10 @@ namespace Khourse.Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("author_id");
 
+                    b.Property<int>("Category")
+                        .HasColumnType("integer")
+                        .HasColumnName("category");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -130,9 +134,17 @@ namespace Khourse.Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
+                    b.Property<int>("DurationMins")
+                        .HasColumnType("integer")
+                        .HasColumnName("duration_mins");
+
                     b.Property<bool>("IsPublished")
                         .HasColumnType("boolean")
                         .HasColumnName("is_published");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric")
+                        .HasColumnName("price");
 
                     b.Property<string>("ThumbnailUrl")
                         .IsRequired()
@@ -144,6 +156,10 @@ namespace Khourse.Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("title");
 
+                    b.Property<int>("TotalModule")
+                        .HasColumnType("integer")
+                        .HasColumnName("total_module");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -154,28 +170,82 @@ namespace Khourse.Api.Migrations
                     b.HasIndex("AuthorId")
                         .HasDatabaseName("i_x_courses_author_id");
 
-                    b.ToTable("courses", (string)null);
+                    b.ToTable("courses");
                 });
 
-            modelBuilder.Entity("Khourse.Api.Models.Module", b =>
+            modelBuilder.Entity("Khourse.Api.Models.CourseEnrollment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("content");
-
-                    b.Property<Guid?>("CourseId")
+                    b.Property<Guid>("CourseId")
                         .HasColumnType("uuid")
                         .HasColumnName("course_id");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<string>("StudentId")
+                        .HasColumnType("text")
+                        .HasColumnName("student_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_course_enrollments");
+
+                    b.HasIndex("CourseId")
+                        .HasDatabaseName("i_x_course_enrollments_course_id");
+
+                    b.HasIndex("StudentId")
+                        .HasDatabaseName("i_x_course_enrollments_student_id");
+
+                    b.ToTable("course_enrollments");
+                });
+
+            modelBuilder.Entity("Khourse.Api.Models.Lesson", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("ContentType")
+                        .HasColumnType("integer")
+                        .HasColumnName("content_type");
+
+                    b.Property<string>("ContentUrl")
+                        .HasColumnType("text")
+                        .HasColumnName("content_url");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_published");
+
+                    b.Property<Guid?>("ModuleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("module_id");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("integer")
+                        .HasColumnName("position");
+
+                    b.Property<string>("TextContent")
+                        .HasColumnType("text")
+                        .HasColumnName("text_content");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -186,9 +256,54 @@ namespace Khourse.Api.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<string>("VideoUrl")
+                    b.Property<int?>("VideoDurationMins")
+                        .HasColumnType("integer")
+                        .HasColumnName("video_duration_mins");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_lessons");
+
+                    b.HasIndex("ModuleId")
+                        .HasDatabaseName("i_x_lessons_module_id");
+
+                    b.ToTable("lessons");
+                });
+
+            modelBuilder.Entity("Khourse.Api.Models.Module", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("CourseId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("course_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("EstimatedDurationMins")
+                        .HasColumnType("integer")
+                        .HasColumnName("estimated_duration_mins");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_published");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("integer")
+                        .HasColumnName("position");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("video_url");
+                        .HasColumnName("title");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id")
                         .HasName("p_k_modules");
@@ -196,7 +311,189 @@ namespace Khourse.Api.Migrations
                     b.HasIndex("CourseId")
                         .HasDatabaseName("i_x_modules_course_id");
 
-                    b.ToTable("modules", (string)null);
+                    b.ToTable("modules");
+                });
+
+            modelBuilder.Entity("Khourse.Api.Models.Quiz", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Grade")
+                        .HasColumnType("text")
+                        .HasColumnName("grade");
+
+                    b.Property<string>("Instructions")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("instructions");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_published");
+
+                    b.Property<Guid?>("ModuleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("module_id");
+
+                    b.Property<int>("PassingScore")
+                        .HasColumnType("integer")
+                        .HasColumnName("passing_score");
+
+                    b.Property<int>("TimeLimitMins")
+                        .HasColumnType("integer")
+                        .HasColumnName("time_limit_mins");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_quizzes");
+
+                    b.HasIndex("ModuleId")
+                        .HasDatabaseName("i_x_quizzes_module_id");
+
+                    b.ToTable("quizzes");
+                });
+
+            modelBuilder.Entity("Khourse.Api.Models.QuizQuestion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CorrectAnswer")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("correct_answer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Explanation")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("explanation");
+
+                    b.Property<string>("Options")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("options");
+
+                    b.Property<string>("QuestionText")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("question_text");
+
+                    b.Property<int>("QuestionType")
+                        .HasColumnType("integer")
+                        .HasColumnName("question_type");
+
+                    b.Property<Guid>("QuizId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("quiz_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_quiz_questions");
+
+                    b.HasIndex("QuizId")
+                        .HasDatabaseName("i_x_quiz_questions_quiz_id");
+
+                    b.ToTable("quiz_questions");
+                });
+
+            modelBuilder.Entity("Khourse.Api.Models.Resource", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<Guid?>("ModuleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("module_id");
+
+                    b.Property<string>("ResourceUrl")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("resource_url");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_resources");
+
+                    b.HasIndex("ModuleId")
+                        .HasDatabaseName("i_x_resources_module_id");
+
+                    b.ToTable("resources");
+                });
+
+            modelBuilder.Entity("Khourse.Api.Models.UserProfleSettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("p_k_user_profile_settings");
+
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasDatabaseName("i_x_user_profile_settings_user_id");
+
+                    b.ToTable("user_profile_settings");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -366,11 +663,42 @@ namespace Khourse.Api.Migrations
             modelBuilder.Entity("Khourse.Api.Models.Course", b =>
                 {
                     b.HasOne("Khourse.Api.Models.AppUser", "Author")
-                        .WithMany()
+                        .WithMany("AuthoredCourses")
                         .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("f_k_courses_users_author_id");
 
                     b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("Khourse.Api.Models.CourseEnrollment", b =>
+                {
+                    b.HasOne("Khourse.Api.Models.Course", "Courses")
+                        .WithMany("CourseEnrollments")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("f_k_course_enrollments_courses_course_id");
+
+                    b.HasOne("Khourse.Api.Models.AppUser", "Students")
+                        .WithMany("CourseEnrollments")
+                        .HasForeignKey("StudentId")
+                        .HasConstraintName("f_k_course_enrollments_users_student_id");
+
+                    b.Navigation("Courses");
+
+                    b.Navigation("Students");
+                });
+
+            modelBuilder.Entity("Khourse.Api.Models.Lesson", b =>
+                {
+                    b.HasOne("Khourse.Api.Models.Module", "Module")
+                        .WithMany("Lessons")
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("f_k_lessons_modules_module_id");
+
+                    b.Navigation("Module");
                 });
 
             modelBuilder.Entity("Khourse.Api.Models.Module", b =>
@@ -378,9 +706,55 @@ namespace Khourse.Api.Migrations
                     b.HasOne("Khourse.Api.Models.Course", "Course")
                         .WithMany("Modules")
                         .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("f_k_modules_courses_course_id");
 
                     b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("Khourse.Api.Models.Quiz", b =>
+                {
+                    b.HasOne("Khourse.Api.Models.Module", "Module")
+                        .WithMany("Quizzes")
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("f_k_quizzes_modules_module_id");
+
+                    b.Navigation("Module");
+                });
+
+            modelBuilder.Entity("Khourse.Api.Models.QuizQuestion", b =>
+                {
+                    b.HasOne("Khourse.Api.Models.Quiz", "Quiz")
+                        .WithMany("Questions")
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("f_k_quiz_questions_quizzes_quiz_id");
+
+                    b.Navigation("Quiz");
+                });
+
+            modelBuilder.Entity("Khourse.Api.Models.Resource", b =>
+                {
+                    b.HasOne("Khourse.Api.Models.Module", "Module")
+                        .WithMany("Resources")
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("f_k_resources_modules_module_id");
+
+                    b.Navigation("Module");
+                });
+
+            modelBuilder.Entity("Khourse.Api.Models.UserProfleSettings", b =>
+                {
+                    b.HasOne("Khourse.Api.Models.AppUser", "User")
+                        .WithOne("UserProfile")
+                        .HasForeignKey("Khourse.Api.Models.UserProfleSettings", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("f_k_user_profile_settings_users_user_id");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -440,9 +814,34 @@ namespace Khourse.Api.Migrations
                         .HasConstraintName("f_k_user_tokens_users_user_id");
                 });
 
+            modelBuilder.Entity("Khourse.Api.Models.AppUser", b =>
+                {
+                    b.Navigation("AuthoredCourses");
+
+                    b.Navigation("CourseEnrollments");
+
+                    b.Navigation("UserProfile");
+                });
+
             modelBuilder.Entity("Khourse.Api.Models.Course", b =>
                 {
+                    b.Navigation("CourseEnrollments");
+
                     b.Navigation("Modules");
+                });
+
+            modelBuilder.Entity("Khourse.Api.Models.Module", b =>
+                {
+                    b.Navigation("Lessons");
+
+                    b.Navigation("Quizzes");
+
+                    b.Navigation("Resources");
+                });
+
+            modelBuilder.Entity("Khourse.Api.Models.Quiz", b =>
+                {
+                    b.Navigation("Questions");
                 });
 #pragma warning restore 612, 618
         }

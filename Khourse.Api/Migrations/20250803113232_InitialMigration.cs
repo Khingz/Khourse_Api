@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -6,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Khourse.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitalMigration : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -74,26 +75,31 @@ namespace Khourse.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Course",
+                name: "courses",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     title = table.Column<string>(type: "text", nullable: false),
                     description = table.Column<string>(type: "text", nullable: false),
                     thumbnail_url = table.Column<string>(type: "text", nullable: false),
-                    author_id = table.Column<string>(type: "text", nullable: true),
+                    category = table.Column<int>(type: "integer", nullable: false),
+                    duration_mins = table.Column<int>(type: "integer", nullable: false),
+                    total_module = table.Column<int>(type: "integer", nullable: false),
+                    price = table.Column<decimal>(type: "numeric", nullable: false),
                     is_published = table.Column<bool>(type: "boolean", nullable: false),
+                    author_id = table.Column<string>(type: "text", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("p_k__course", x => x.id);
+                    table.PrimaryKey("p_k_courses", x => x.id);
                     table.ForeignKey(
-                        name: "f_k__course_users_author_id",
+                        name: "f_k_courses_users_author_id",
                         column: x => x.author_id,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -131,6 +137,26 @@ namespace Khourse.Api.Migrations
                     table.PrimaryKey("p_k_user_logins", x => new { x.login_provider, x.provider_key });
                     table.ForeignKey(
                         name: "f_k_user_logins_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "user_profile_settings",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<string>(type: "text", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("p_k_user_profile_settings", x => x.id);
+                    table.ForeignKey(
+                        name: "f_k_user_profile_settings_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -182,36 +208,197 @@ namespace Khourse.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Module",
+                name: "course_enrollments",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    student_id = table.Column<string>(type: "text", nullable: true),
+                    course_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("p_k_course_enrollments", x => x.id);
+                    table.ForeignKey(
+                        name: "f_k_course_enrollments_courses_course_id",
+                        column: x => x.course_id,
+                        principalTable: "courses",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "f_k_course_enrollments_users_student_id",
+                        column: x => x.student_id,
+                        principalTable: "users",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "modules",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     title = table.Column<string>(type: "text", nullable: false),
-                    content = table.Column<string>(type: "text", nullable: false),
-                    video_url = table.Column<string>(type: "text", nullable: true),
+                    position = table.Column<int>(type: "integer", nullable: false),
+                    estimated_duration_mins = table.Column<int>(type: "integer", nullable: false),
+                    is_published = table.Column<bool>(type: "boolean", nullable: false),
                     course_id = table.Column<Guid>(type: "uuid", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("p_k__module", x => x.id);
+                    table.PrimaryKey("p_k_modules", x => x.id);
                     table.ForeignKey(
-                        name: "f_k__module__course_course_id",
+                        name: "f_k_modules_courses_course_id",
                         column: x => x.course_id,
-                        principalTable: "Course",
-                        principalColumn: "id");
+                        principalTable: "courses",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "lessons",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    title = table.Column<string>(type: "text", nullable: false),
+                    content_type = table.Column<int>(type: "integer", nullable: false),
+                    content_url = table.Column<string>(type: "text", nullable: true),
+                    text_content = table.Column<string>(type: "text", nullable: true),
+                    video_duration_mins = table.Column<int>(type: "integer", nullable: true),
+                    position = table.Column<int>(type: "integer", nullable: false),
+                    is_published = table.Column<bool>(type: "boolean", nullable: false),
+                    module_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("p_k_lessons", x => x.id);
+                    table.ForeignKey(
+                        name: "f_k_lessons_modules_module_id",
+                        column: x => x.module_id,
+                        principalTable: "modules",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "quizzes",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    title = table.Column<string>(type: "text", nullable: false),
+                    instructions = table.Column<string>(type: "text", nullable: false),
+                    passing_score = table.Column<int>(type: "integer", nullable: false),
+                    time_limit_mins = table.Column<int>(type: "integer", nullable: false),
+                    is_published = table.Column<bool>(type: "boolean", nullable: false),
+                    grade = table.Column<string>(type: "text", nullable: true),
+                    module_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("p_k_quizzes", x => x.id);
+                    table.ForeignKey(
+                        name: "f_k_quizzes_modules_module_id",
+                        column: x => x.module_id,
+                        principalTable: "modules",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "resources",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    title = table.Column<string>(type: "text", nullable: false),
+                    description = table.Column<string>(type: "text", nullable: false),
+                    type = table.Column<int>(type: "integer", nullable: false),
+                    resource_url = table.Column<string>(type: "text", nullable: false),
+                    module_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("p_k_resources", x => x.id);
+                    table.ForeignKey(
+                        name: "f_k_resources_modules_module_id",
+                        column: x => x.module_id,
+                        principalTable: "modules",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "quiz_questions",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    question_text = table.Column<string>(type: "text", nullable: false),
+                    question_type = table.Column<int>(type: "integer", nullable: false),
+                    options = table.Column<string>(type: "text", nullable: false),
+                    correct_answer = table.Column<string>(type: "text", nullable: false),
+                    explanation = table.Column<string>(type: "text", nullable: false),
+                    quiz_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("p_k_quiz_questions", x => x.id);
+                    table.ForeignKey(
+                        name: "f_k_quiz_questions_quizzes_quiz_id",
+                        column: x => x.quiz_id,
+                        principalTable: "quizzes",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "i_x__course_author_id",
-                table: "Course",
+                name: "i_x_course_enrollments_course_id",
+                table: "course_enrollments",
+                column: "course_id");
+
+            migrationBuilder.CreateIndex(
+                name: "i_x_course_enrollments_student_id",
+                table: "course_enrollments",
+                column: "student_id");
+
+            migrationBuilder.CreateIndex(
+                name: "i_x_courses_author_id",
+                table: "courses",
                 column: "author_id");
 
             migrationBuilder.CreateIndex(
-                name: "i_x__module_course_id",
-                table: "Module",
+                name: "i_x_lessons_module_id",
+                table: "lessons",
+                column: "module_id");
+
+            migrationBuilder.CreateIndex(
+                name: "i_x_modules_course_id",
+                table: "modules",
                 column: "course_id");
+
+            migrationBuilder.CreateIndex(
+                name: "i_x_quiz_questions_quiz_id",
+                table: "quiz_questions",
+                column: "quiz_id");
+
+            migrationBuilder.CreateIndex(
+                name: "i_x_quizzes_module_id",
+                table: "quizzes",
+                column: "module_id");
+
+            migrationBuilder.CreateIndex(
+                name: "i_x_resources_module_id",
+                table: "resources",
+                column: "module_id");
 
             migrationBuilder.CreateIndex(
                 name: "i_x_role_claims_role_id",
@@ -235,6 +422,12 @@ namespace Khourse.Api.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
+                name: "i_x_user_profile_settings_user_id",
+                table: "user_profile_settings",
+                column: "user_id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "i_x_user_roles_role_id",
                 table: "user_roles",
                 column: "role_id");
@@ -255,7 +448,16 @@ namespace Khourse.Api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Module");
+                name: "course_enrollments");
+
+            migrationBuilder.DropTable(
+                name: "lessons");
+
+            migrationBuilder.DropTable(
+                name: "quiz_questions");
+
+            migrationBuilder.DropTable(
+                name: "resources");
 
             migrationBuilder.DropTable(
                 name: "role_claims");
@@ -267,16 +469,25 @@ namespace Khourse.Api.Migrations
                 name: "user_logins");
 
             migrationBuilder.DropTable(
+                name: "user_profile_settings");
+
+            migrationBuilder.DropTable(
                 name: "user_roles");
 
             migrationBuilder.DropTable(
                 name: "user_tokens");
 
             migrationBuilder.DropTable(
-                name: "Course");
+                name: "quizzes");
 
             migrationBuilder.DropTable(
                 name: "roles");
+
+            migrationBuilder.DropTable(
+                name: "modules");
+
+            migrationBuilder.DropTable(
+                name: "courses");
 
             migrationBuilder.DropTable(
                 name: "users");

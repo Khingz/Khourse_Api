@@ -8,10 +8,18 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<AppUser>(options)
 {
+    // Regiter/Set Model to be captured on db
     public DbSet<Module> Module => Set<Module>();
     public DbSet<Course> Course => Set<Course>();
+    public DbSet<Lesson> Lesson => Set<Lesson>();
+    public DbSet<CourseEnrollment> CourseEnrollments => Set<CourseEnrollment>();
+    public DbSet<QuizQuestion> QuizQuestion => Set<QuizQuestion>();
+    public DbSet<Quiz> Quiz => Set<Quiz>();
+    public DbSet<Resource> Resource => Set<Resource>();
+    public DbSet<UserProfleSettings> UserProfleSettings => Set<UserProfleSettings>();
 
-    // This overides/set default value for createdAt and updateAt property fields asynchronously
+
+    // Overides/set default value for createdAt and updateAt property fields asynchronously
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         var entries = ChangeTracker.Entries<BaseModel>();
@@ -45,8 +53,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
         builder.Entity<IdentityUserLogin<string>>().ToTable("user_logins");
         builder.Entity<IdentityRoleClaim<string>>().ToTable("role_claims");
         builder.Entity<IdentityUserToken<string>>().ToTable("user_tokens");
-        builder.Entity<Course>().ToTable("courses");
-        builder.Entity<Module>().ToTable("modules");
+
+        // Applies model configurations defined in /Configuration
+        builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
         // Apply snake_case to all column names
         foreach (var entity in builder.Model.GetEntityTypes())
