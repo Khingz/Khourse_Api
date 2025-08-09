@@ -21,9 +21,6 @@ public class Course : BaseModel
     [Column("duration_mins")]
     public int DurationMins { get; set; } = 0;
 
-    [Column("total_module")]
-    public int TotalModule { get; set; } = 0;
-
     [Column("price")]
     public decimal Price { get; set; } = 0;
 

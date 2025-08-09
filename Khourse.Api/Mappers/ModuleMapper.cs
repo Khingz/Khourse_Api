@@ -11,9 +11,15 @@ public static class ModuleMapper
         {
             Id = module.Id,
             Title = module.Title,
+            Position = module.Position,
+            EstimatedDurationMins = module.EstimatedDurationMins,
+            IsPublished = module.IsPublished,
             CourseId = module.CourseId,
             CreatedAt = module.CreatedAt,
             UpdatedAt = module.UpdatedAt ?? DateTime.UtcNow,
+            Quizzes = [.. module.Quizzes.Select(q => q.ToQuizDto())],
+            Resources = [.. module.Resources.Select(r => r.ToResourceDto())],
+            Lessons = [.. module.Lessons.Select(l => l.ToLessonDto())]
         };
     }
 
@@ -22,6 +28,8 @@ public static class ModuleMapper
         return new Module
         {
             Title = moduleDto.Title,
+            Position = moduleDto.Position,
+            EstimatedDurationMins = moduleDto.EstimatedDurationMins,
             CourseId = moduleDto.CourseId
         };
     }

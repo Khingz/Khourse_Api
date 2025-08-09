@@ -15,4 +15,5 @@ public interface ICourseRepository
     Task<CourseDto?> DeleteAsync(Guid id, string currentUserID);
     Task<bool> CourseExists(Guid id);
     Task<PaginatedResponse<ModuleDto>> GetCourseModulesAsync(Guid courseId, QueryObject queryObj);
+    Task<Course?> CourseById(Guid id);
 }

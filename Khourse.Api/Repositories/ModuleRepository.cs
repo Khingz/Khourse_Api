@@ -27,7 +27,7 @@ public class ModuleRepository(AppDbContext dbContext) : IModuleRepository
 
     public async Task<List<Module>> GetAllAsync()
     {
-        return await _dbContext.Module.ToListAsync();
+        return await _dbContext.Module.ToListAsync() ?? throw new KeyNotFoundException("Module not found!");
     }
 
     public async Task<Module?> GetByIdAsync(Guid id)
@@ -46,6 +46,11 @@ public class ModuleRepository(AppDbContext dbContext) : IModuleRepository
 
     private static void UpdateModuleFields(Module module, UpdateModuleRequestDto updateDto)
     {
-        module.Title = updateDto.Title ?? module.Title;
+        module.Title = string.IsNullOrWhiteSpace(updateDto.Title)
+            ? module.Title
+            : updateDto.Title;
+
+        module.Position = updateDto.Position ?? module.Position;
+        module.EstimatedDurationMins = updateDto.EstimatedDurationMins ?? module.EstimatedDurationMins;
     }
 }

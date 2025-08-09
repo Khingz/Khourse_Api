@@ -28,7 +28,6 @@ public class CourseController(ICourseRepository courseRepo, ICurrentUserService 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCourseRequestDto courseDto)
     {
-        Console.WriteLine(_currentUserService.Role);
         var courseModel = courseDto.ToCourseEntity(_currentUserService.UserId!);
         var result = await _courseRepo.CreateAsync(courseModel);
         var response = ApiSuccessResponse<CourseDto>.Ok(result, "Course created successfully");

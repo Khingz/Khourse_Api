@@ -16,7 +16,6 @@ public static class CourseMapper
             Author = course.Author?.ToUserDto(role),
             Category = course.Category,
             DurationMins = course.DurationMins,
-            TotalModule = course.TotalModule,
             Price = course.Price,
             IsPublished = course.IsPublished,
             CreatedAt = course.CreatedAt,
