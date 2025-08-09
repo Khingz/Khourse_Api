@@ -46,8 +46,6 @@ public class GlobalExceptionHandlerMiddleware(RequestDelegate next, ILogger<Glob
                 );
             }
 
-            // var result = JsonSerializer.Serialize(errorResponse);
-            // convert error response so as to newton globa settings
             var json = JsonConvert.SerializeObject(errorResponse, JsonConfig.SnakeCaseSettings);
             await context.Response.WriteAsync(json);
         }
@@ -60,7 +58,6 @@ public class GlobalExceptionHandlerMiddleware(RequestDelegate next, ILogger<Glob
         ArgumentException => (StatusCodes.Status400BadRequest, "Bad Request"),
         FormatException => (StatusCodes.Status400BadRequest, "Bad Request"),
         InvalidCastException => (StatusCodes.Status400BadRequest, "Bad Request"),
-
         UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "Unauthorized"),
         AccessViolationException => (StatusCodes.Status403Forbidden, "Forbidden"),
         KeyNotFoundException => (StatusCodes.Status404NotFound, "Not Found"),

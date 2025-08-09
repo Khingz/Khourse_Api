@@ -1,6 +1,5 @@
 using Khourse.Api.Dtos.Account;
 using Khourse.Api.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace Khourse.Api.Mappers;
 
@@ -13,7 +12,7 @@ public static class AccountMappers
             AccessToken = token,
             User = new UserDto
             {
-                Id = Guid.Parse(user.Id),
+                Id = user.Id,
                 Email = user.Email,
                 Firstname = user.Firstname,
                 Lastname = user.Lastname,
@@ -26,7 +25,7 @@ public static class AccountMappers
     {
         return new UserDto
             {
-                Id = Guid.Parse(user.Id),
+                Id = user.Id,
                 Email = user.Email,
                 Firstname = user.Firstname,
                 Lastname = user.Lastname,

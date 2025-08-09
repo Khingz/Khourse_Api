@@ -1,7 +1,6 @@
 using Khourse.Api.Dtos.Account;
 using Khourse.Api.Models;
 using Khourse.Api.Repositories.IRepositories;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +25,11 @@ public class AccountRepository(UserManager<AppUser> userManager, SignInManager<A
     public async Task<IList<string>> GetUserRolesAsync(AppUser user)
     {
         return await _userManager.GetRolesAsync(user);
+    }
+
+    public async Task<bool> UserHasRoleAsync(AppUser user, string role)
+    {
+        return await _userManager.IsInRoleAsync(user, role);
     }
 
     public async Task<bool> UpdateRoleAsync(string userId, UpdateRoleDto roleDto)

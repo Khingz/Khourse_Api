@@ -3,6 +3,8 @@ using Khourse.Api.Dtos.CourseDtos;
 using Khourse.Api.Helpers;
 using Khourse.Api.Mappers;
 using Khourse.Api.Repositories.IRepositories;
+using Khourse.Api.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Khourse.Api.Controllers;
@@ -10,13 +12,10 @@ namespace Khourse.Api.Controllers;
 
 [ApiVersion("1.0")]
 [Route("api/{version:apiVersion}/courses")]
-public class CourseController : BaseController
+public class CourseController(ICourseRepository courseRepo, ICurrentUserService currentUserService) : BaseController
 {
-    private readonly ICourseRepository _courseRepo;
-    public CourseController(ICourseRepository courseRepo)
-    {
-        _courseRepo = courseRepo;
-    }
+    private readonly ICourseRepository _courseRepo = courseRepo;
+    private readonly ICurrentUserService _currentUserService = currentUserService;
 
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery] CourseQueryOject query)
@@ -25,12 +24,14 @@ public class CourseController : BaseController
         return OkResponse("Courses fetched successfully", courses);
     }
 
+    [Authorize(Roles = "Author,Admin")]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCourseRequestDto courseDto)
     {
-        var courseModel = courseDto.ToCourseEntity();
-        await _courseRepo.CreateAsync(courseModel);
-        var response = ApiSuccessResponse<CourseDto>.Ok(courseModel.ToCourseDto(), "Course created successfully");
+        Console.WriteLine(_currentUserService.Role);
+        var courseModel = courseDto.ToCourseEntity(_currentUserService.UserId!);
+        var result = await _courseRepo.CreateAsync(courseModel);
+        var response = ApiSuccessResponse<CourseDto>.Ok(result, "Course created successfully");
         return CreatedAtAction(nameof(GetById), new { id = courseModel.Id }, response);
     }
 
@@ -46,6 +47,7 @@ public class CourseController : BaseController
 
     }
 
+    [Authorize(Roles = "Admin,Author")]
     [HttpPatch("{id}")]
     public async Task<IActionResult> Update([FromRoute] string id, [FromBody] UpdateCourseRequestDto updateDto)
     {
@@ -53,10 +55,11 @@ public class CourseController : BaseController
         {
             throw new BadHttpRequestException("Invalid Id format!");
         }
-        var course = await _courseRepo.UpdateAsync(guid, updateDto);
+        var course = await _courseRepo.UpdateAsync(guid, updateDto, _currentUserService.UserId!);
         return OkResponse("Course feteched successfully", course);
     }
 
+    [Authorize(Roles = "Author,Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete([FromRoute] string id)
     {
@@ -64,7 +67,7 @@ public class CourseController : BaseController
         {
             throw new BadHttpRequestException("Invalid Id format!");
         }
-        var course = await _courseRepo.DeleteAsync(guid);
+        var course = await _courseRepo.DeleteAsync(guid, _currentUserService.UserId!);
         return OkResponse("Course deleted successfully", course);
     }
 

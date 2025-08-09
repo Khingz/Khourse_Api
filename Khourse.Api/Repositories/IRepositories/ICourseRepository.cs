@@ -9,10 +9,10 @@ namespace Khourse.Api.Repositories.IRepositories;
 public interface ICourseRepository
 {
     Task<PaginatedResponse<CourseDto>> GetAllAsync(CourseQueryOject query);
-    Task<Course> CreateAsync(Course course);
-    Task<Course?> GetByIdAsync(Guid id);
-    Task<Course?> UpdateAsync(Guid id, UpdateCourseRequestDto course);
-    Task<Course?> DeleteAsync(Guid id);
+    Task<CourseDto> CreateAsync(Course course);
+    Task<CourseDto?> GetByIdAsync(Guid id);
+    Task<CourseDto?> UpdateAsync(Guid id, UpdateCourseRequestDto courseUpdateDto, string currentUserID);
+    Task<CourseDto?> DeleteAsync(Guid id, string currentUserID);
     Task<bool> CourseExists(Guid id);
     Task<PaginatedResponse<ModuleDto>> GetCourseModulesAsync(Guid courseId, QueryObject queryObj);
 }

@@ -19,13 +19,13 @@ public class Course : BaseModel
     public CourseCategory Category { get; set; } = CourseCategory.Programming;
 
     [Column("duration_mins")]
-    public int DurationMins { get; set; }
+    public int DurationMins { get; set; } = 0;
 
     [Column("total_module")]
-    public int TotalModule { get; set; }
+    public int TotalModule { get; set; } = 0;
 
     [Column("price")]
-    public decimal Price { get; set; }
+    public decimal Price { get; set; } = 0;
 
     [Column("is_published")]
     public bool IsPublished { get; set; } = false;

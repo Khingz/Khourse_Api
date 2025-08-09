@@ -1,5 +1,6 @@
+using Khourse.Api.Dtos.Account;
 using Khourse.Api.Dtos.ModuleDtos;
-using Khourse.Api.Models;
+using Khourse.Api.Enums;
 
 namespace Khourse.Api.Dtos.CourseDtos;
 public class CourseDto
@@ -11,10 +12,12 @@ public class CourseDto
 
     public string ThumbnailUrl { get; set; } = string.Empty;
 
-    public AppUser? Author { get; set; }
-
+    public CourseCategory Category { get; set; }
+    public UserDto? Author { get; set; }
     public bool IsPublished { get; set; }
-
+    public decimal Price { get; set; }
+    public int TotalModule { get; set; }
+    public int DurationMins { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public ICollection<ModuleDto> Modules { get; set; } = [];

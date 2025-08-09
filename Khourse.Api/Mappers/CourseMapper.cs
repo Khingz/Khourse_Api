@@ -5,7 +5,7 @@ namespace Khourse.Api.Mappers;
 
 public static class CourseMapper
 {
-    public static CourseDto ToCourseDto(this Course course)
+    public static CourseDto ToCourseDto(this Course course, IList<string> role)
     {
         return new CourseDto
         {
@@ -13,7 +13,11 @@ public static class CourseMapper
             Title = course.Title,
             Description = course.Description,
             ThumbnailUrl = course.ThumbnailUrl,
-            Author = course.Author,
+            Author = course.Author?.ToUserDto(role),
+            Category = course.Category,
+            DurationMins = course.DurationMins,
+            TotalModule = course.TotalModule,
+            Price = course.Price,
             IsPublished = course.IsPublished,
             CreatedAt = course.CreatedAt,
             UpdatedAt = course.UpdatedAt ?? DateTime.UtcNow,
@@ -21,7 +25,7 @@ public static class CourseMapper
         };
     }
 
-    public static Course ToCourseEntity(this CreateCourseRequestDto courseDto)
+    public static Course ToCourseEntity(this CreateCourseRequestDto courseDto, string userId)
     {
         return new Course
         {
@@ -29,6 +33,9 @@ public static class CourseMapper
             Description = courseDto.Description,
             ThumbnailUrl = courseDto.ThumbnailUrl,
             IsPublished = courseDto.IsPublished,
+            Category = courseDto.Category,
+            Price = courseDto.Price,
+            AuthorId = userId
         };
     }
 

@@ -5,7 +5,7 @@ public class ApiErrorResponse
     public bool Success { get; set; } = false;
     public string Message { get; set; } = "An error occurred";
     public int StatusCode { get; set; }
-    public IEnumerable<ErrorDetail> Errors { get; set; } = Enumerable.Empty<ErrorDetail>();
+    public IEnumerable<ErrorDetail> Errors { get; set; } = [];
 
     public static ApiErrorResponse Fail(int statusCode, string message, IEnumerable<ErrorDetail>? errors = null)
     {

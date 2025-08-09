@@ -1,4 +1,3 @@
-using System;
 using Khourse.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

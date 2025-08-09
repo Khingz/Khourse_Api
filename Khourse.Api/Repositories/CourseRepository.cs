@@ -10,13 +10,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Khourse.Api.Repositories;
 
-public class CourseRepository(AppDbContext dbContext) : ICourseRepository
+public class CourseRepository(AppDbContext dbContext, IAccountRepository accountRepo) : ICourseRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
+    private readonly IAccountRepository _accountRepo = accountRepo;
 
     public async Task<PaginatedResponse<CourseDto>> GetAllAsync(CourseQueryOject query)
     {
-        var courses = _dbContext.Course.Include(c => c.Modules).AsQueryable();
+        var courses = _dbContext.Course.Include(c => c.Modules).Include(c => c.Author).AsQueryable();
         if (!string.IsNullOrWhiteSpace(query.Title))
         {
             courses = courses.Where(course => EF.Functions.ILike(course.Title, $"%{query.Title}%"));
@@ -41,7 +42,14 @@ public class CourseRepository(AppDbContext dbContext) : ICourseRepository
         var skipNumber = (query.PageNumber - 1) * query.PageSize;
         var totalItems = await courses.CountAsync();
         var result = await courses.OrderByDescending(c => c.CreatedAt).Skip(skipNumber).Take(query.PageSize).ToListAsync();
-        var dtoData = result.Select(c => c.ToCourseDto()).ToList();
+        var dtoData = new List<CourseDto>();
+        foreach (var course in result)
+        {
+            var user = await _accountRepo.UserByIdAsync(course.AuthorId!);
+
+            var authorRoles = await _accountRepo.GetUserRolesAsync(user!);
+            dtoData.Add(course.ToCourseDto([.. authorRoles]));
+        }
         var response = new PaginatedResponse<CourseDto>
         {
             Data = dtoData,
@@ -54,17 +62,24 @@ public class CourseRepository(AppDbContext dbContext) : ICourseRepository
 
     }
 
-    public async Task<Course> CreateAsync(Course courseModel)
+    public async Task<CourseDto> CreateAsync(Course courseModel)
     {
+        var user = await _accountRepo.UserByIdAsync(courseModel.AuthorId!) ?? throw new AccessViolationException("User in not authorized to create resource");
         await _dbContext.Course.AddAsync(courseModel);
         await _dbContext.SaveChangesAsync();
-        return courseModel;
+        var roles = await _accountRepo.GetUserRolesAsync(user!);
+        return courseModel.ToCourseDto(roles);
     }
 
-    public async Task<Course?> GetByIdAsync(Guid id)
+    public async Task<CourseDto?> GetByIdAsync(Guid id)
     {
-        var course = await _dbContext.Course.Include(c => c.Modules).FirstOrDefaultAsync(i => i.Id == id);
-        return course;
+        var course = await _dbContext.Course
+            .Include(c => c.Author)
+            .Include(c => c.Modules)
+            .FirstOrDefaultAsync(i => i.Id == id) ?? throw new KeyNotFoundException("Course not found");
+
+        var roles = await _accountRepo.GetUserRolesAsync(course.Author!);
+        return course.ToCourseDto(roles);
     }
 
     public Task<bool> CourseExists(Guid id)
@@ -75,26 +90,57 @@ public class CourseRepository(AppDbContext dbContext) : ICourseRepository
     private static void UpdateCourseFields(Course course, UpdateCourseRequestDto updateDto)
     {
         course.IsPublished = updateDto.IsPublished;
-        course.Title = updateDto.Title ?? course.Title;
-        course.Description = updateDto.Description ?? course.Description;
-        course.ThumbnailUrl = updateDto.ThumbnailUrl ?? course.ThumbnailUrl;
+
+        course.Title = string.IsNullOrWhiteSpace(updateDto.Title)
+            ? course.Title
+            : updateDto.Title;
+
+        course.Description = string.IsNullOrWhiteSpace(updateDto.Description)
+            ? course.Description
+            : updateDto.Description;
+
+        course.ThumbnailUrl = string.IsNullOrWhiteSpace(updateDto.ThumbnailUrl)
+            ? course.ThumbnailUrl
+            : updateDto.ThumbnailUrl;
+
+        course.Price = updateDto.Price ?? course.Price;
+        course.Category = updateDto.Category ?? course.Category;
     }
 
-    public async Task<Course?> UpdateAsync(Guid id, UpdateCourseRequestDto courseUpdateDto)
+    public async Task<CourseDto?> UpdateAsync(Guid id, UpdateCourseRequestDto courseUpdateDto, string currentUserID)
     {
-        var course = await _dbContext.Course.FirstOrDefaultAsync(x => x.Id == id) ?? throw new KeyNotFoundException("Course not found!");
+        var course = await _dbContext.Course
+            .Include(c => c.Author)
+            .Include(c => c.Modules)
+            .FirstOrDefaultAsync(i => i.Id == id) ?? throw new KeyNotFoundException("Course not found");
+        var currentUser = await _accountRepo.UserByIdAsync(currentUserID!) ?? throw new UnauthorizedAccessException("You are not authorized to update this course"); ;
+        var isAdmin = await _accountRepo.UserHasRoleAsync(currentUser, "Admin");
+        if (!isAdmin && currentUserID != course.AuthorId)
+        {
+            throw new AccessViolationException("You are not authorized to update this course");
+        }
         UpdateCourseFields(course, courseUpdateDto);
         await _dbContext.SaveChangesAsync();
-        return course;
+        var roles = await _accountRepo.GetUserRolesAsync(course.Author!);
+        return course.ToCourseDto(roles);
     }
 
-    public async Task<Course?> DeleteAsync(Guid id)
+    public async Task<CourseDto?> DeleteAsync(Guid id, string currentUserID)
     {
-        var course = await _dbContext.Course.FirstOrDefaultAsync(x => x.Id == id) ?? throw new KeyNotFoundException("Course not found!");
+        var course = await _dbContext.Course
+            .Include(c => c.Author)
+            .Include(c => c.Modules)
+            .FirstOrDefaultAsync(i => i.Id == id) ?? throw new KeyNotFoundException("Course not found");
+        var user = await _accountRepo.UserByIdAsync(currentUserID!) ?? throw new UnauthorizedAccessException("You are not authorized to delete this course"); ;
+        var isAdmin = await _accountRepo.UserHasRoleAsync(user, "Admin");
+        if (!isAdmin && currentUserID != course.AuthorId)
+        {
+            throw new AccessViolationException("You are not authorized to delete this course");
+        }
         _dbContext.Course.Remove(course);
         await _dbContext.SaveChangesAsync();
-        return course;
-
+        var roles = await _accountRepo.GetUserRolesAsync(course.Author!);
+        return course.ToCourseDto(roles);
     }
 
     public async Task<PaginatedResponse<ModuleDto>> GetCourseModulesAsync(Guid courseId, QueryObject queryObj)

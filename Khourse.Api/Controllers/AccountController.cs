@@ -1,16 +1,9 @@
 using Khourse.Api.Common;
-using Khourse.Api.Configs;
 using Khourse.Api.Dtos;
 using Khourse.Api.Dtos.Account;
-using Khourse.Api.Services.Email;
 using Khourse.Api.Services.Email.IEmail;
 using Khourse.Api.Services.IServices;
-using MailKit.Net.Smtp;
-using MailKit.Security;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using MimeKit;
-using MimeKit.Text;
 
 namespace Khourse.Api.Controllers;
 
