@@ -73,14 +73,20 @@ public class CourseRepository(AppDbContext dbContext, IAccountRepository account
 
     public async Task<CourseDto?> GetByIdAsync(Guid id)
     {
+        var course = await CourseById(id);
+        var roles = await _accountRepo.GetUserRolesAsync(course!.Author!);
+        return course.ToCourseDto(roles);
+    }
+
+    public async Task<Course?> CourseById(Guid id)
+    {
         var course = await _dbContext.Course
             .Include(c => c.Author)
             .Include(c => c.Modules)
             .FirstOrDefaultAsync(i => i.Id == id) ?? throw new KeyNotFoundException("Course not found");
-
-        var roles = await _accountRepo.GetUserRolesAsync(course.Author!);
-        return course.ToCourseDto(roles);
+        return course;
     }
+
 
     public Task<bool> CourseExists(Guid id)
     {
@@ -109,37 +115,32 @@ public class CourseRepository(AppDbContext dbContext, IAccountRepository account
 
     public async Task<CourseDto?> UpdateAsync(Guid id, UpdateCourseRequestDto courseUpdateDto, string currentUserID)
     {
-        var course = await _dbContext.Course
-            .Include(c => c.Author)
-            .Include(c => c.Modules)
-            .FirstOrDefaultAsync(i => i.Id == id) ?? throw new KeyNotFoundException("Course not found");
+        var course = await CourseById(id);
+        ;
         var currentUser = await _accountRepo.UserByIdAsync(currentUserID!) ?? throw new UnauthorizedAccessException("You are not authorized to update this course"); ;
         var isAdmin = await _accountRepo.UserHasRoleAsync(currentUser, "Admin");
-        if (!isAdmin && currentUserID != course.AuthorId)
+        if (!isAdmin && currentUserID != course!.AuthorId)
         {
             throw new AccessViolationException("You are not authorized to update this course");
         }
-        UpdateCourseFields(course, courseUpdateDto);
+        UpdateCourseFields(course!, courseUpdateDto);
         await _dbContext.SaveChangesAsync();
-        var roles = await _accountRepo.GetUserRolesAsync(course.Author!);
+        var roles = await _accountRepo.GetUserRolesAsync(course!.Author!);
         return course.ToCourseDto(roles);
     }
 
     public async Task<CourseDto?> DeleteAsync(Guid id, string currentUserID)
     {
-        var course = await _dbContext.Course
-            .Include(c => c.Author)
-            .Include(c => c.Modules)
-            .FirstOrDefaultAsync(i => i.Id == id) ?? throw new KeyNotFoundException("Course not found");
+        var course = await CourseById(id);
         var user = await _accountRepo.UserByIdAsync(currentUserID!) ?? throw new UnauthorizedAccessException("You are not authorized to delete this course"); ;
         var isAdmin = await _accountRepo.UserHasRoleAsync(user, "Admin");
-        if (!isAdmin && currentUserID != course.AuthorId)
+        if (!isAdmin && currentUserID != course!.AuthorId)
         {
             throw new AccessViolationException("You are not authorized to delete this course");
         }
-        _dbContext.Course.Remove(course);
+        _dbContext.Course.Remove(course!);
         await _dbContext.SaveChangesAsync();
-        var roles = await _accountRepo.GetUserRolesAsync(course.Author!);
+        var roles = await _accountRepo.GetUserRolesAsync(course!.Author!);
         return course.ToCourseDto(roles);
     }
 
