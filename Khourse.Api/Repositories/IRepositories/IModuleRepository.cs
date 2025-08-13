@@ -10,4 +10,6 @@ public interface IModuleRepository
     Task<Module?> GetByIdAsync(Guid moduleId, Guid courseId);
     Task<Module?> UpdateAsync(Guid id, UpdateModuleRequestDto moduleDto, Guid courseId);
     Task<Module?> DeleteAsync(Guid id, Guid courseId);
+    Task<Module?> ModuleByIdAsync(Guid moduleId);
+    
 }

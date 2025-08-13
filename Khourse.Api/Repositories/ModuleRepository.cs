@@ -30,12 +30,17 @@ public class ModuleRepository(AppDbContext dbContext) : IModuleRepository
         return await _dbContext.Module
             .Where(m => m.CourseId == courseId)
             .OrderBy(m => m.Position)
-            .ToListAsync() ?? throw new KeyNotFoundException("Module not found!");
+            .ToListAsync();
     }
-
     public async Task<Module?> GetByIdAsync(Guid moduleId, Guid courseId)
     {
         var module = await _dbContext.Module.FirstOrDefaultAsync(m => m.Id == moduleId && m.CourseId == courseId) ?? throw new KeyNotFoundException("Module not found!");
+        return module;
+    }
+
+    public async Task<Module?> ModuleByIdAsync(Guid moduleId)
+    {
+        var module = await _dbContext.Module.FirstOrDefaultAsync(m => m.Id == moduleId) ?? throw new KeyNotFoundException("Module not found!");
         return module;
     }
 
