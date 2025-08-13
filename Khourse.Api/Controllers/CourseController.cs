@@ -69,16 +69,4 @@ public class CourseController(ICourseRepository courseRepo, ICurrentUserService 
         var course = await _courseRepo.DeleteAsync(guid, _currentUserService.UserId!);
         return OkResponse("Course deleted successfully", course);
     }
-
-    [HttpGet("{id}/modules")]
-    public async Task<IActionResult> GetCourseModules([FromRoute] string id, [FromQuery] QueryObject query)
-    {
-        if (!GuidUtils.TryParse(id, out Guid guid))
-        {
-            throw new BadHttpRequestException("Invalid Id format!");
-
-        }
-        var moduleData = await _courseRepo.GetCourseModulesAsync(guid, query);
-        return OkResponse("Courses fetched successfully", moduleData);
-    }
 }

@@ -17,28 +17,31 @@ public class ModuleRepository(AppDbContext dbContext) : IModuleRepository
         return module;
     }
 
-    public async Task<Module?> DeleteAsync(Guid id)
+    public async Task<Module?> DeleteAsync(Guid id, Guid courseId)
     {
-        var module = await _dbContext.Module.FirstOrDefaultAsync(x => x.Id == id) ?? throw new KeyNotFoundException("Module not found!");
+        var module = await _dbContext.Module.FirstOrDefaultAsync(x => x.Id == id && x.CourseId == courseId) ?? throw new KeyNotFoundException("Module not found!");
         _dbContext.Module.Remove(module);
         await _dbContext.SaveChangesAsync();
         return module;
     }
 
-    public async Task<List<Module>> GetAllAsync()
+    public async Task<List<Module>> GetAllAsync(Guid courseId)
     {
-        return await _dbContext.Module.ToListAsync() ?? throw new KeyNotFoundException("Module not found!");
+        return await _dbContext.Module
+            .Where(m => m.CourseId == courseId)
+            .OrderBy(m => m.Position)
+            .ToListAsync() ?? throw new KeyNotFoundException("Module not found!");
     }
 
-    public async Task<Module?> GetByIdAsync(Guid id)
+    public async Task<Module?> GetByIdAsync(Guid moduleId, Guid courseId)
     {
-        var module = await _dbContext.Module.FirstOrDefaultAsync(i => i.Id == id) ?? throw new KeyNotFoundException("Module not found!");
+        var module = await _dbContext.Module.FirstOrDefaultAsync(m => m.Id == moduleId && m.CourseId == courseId) ?? throw new KeyNotFoundException("Module not found!");
         return module;
     }
 
-    public async Task<Module?> UpdateAsync(Guid id, UpdateModuleRequestDto moduleUpdateDto)
+    public async Task<Module?> UpdateAsync(Guid id, UpdateModuleRequestDto moduleUpdateDto, Guid courseId)
     {
-        var module = await _dbContext.Module.FirstOrDefaultAsync(x => x.Id == id) ?? throw new KeyNotFoundException("Module not found!");
+        var module = await _dbContext.Module.FirstOrDefaultAsync(x => x.Id == id && x.CourseId == courseId) ?? throw new KeyNotFoundException("Module not found!");
         UpdateModuleFields(module, moduleUpdateDto);
         await _dbContext.SaveChangesAsync();
         return module;

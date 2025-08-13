@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Khourse.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7af93fa35904690d0641e7543246e68300e5c601")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+24bb3b770e4e4efb4beba13d743c0630c581e640")]
 [assembly: System.Reflection.AssemblyProductAttribute("Khourse.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Khourse.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

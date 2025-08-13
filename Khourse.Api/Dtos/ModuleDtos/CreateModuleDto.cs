@@ -13,7 +13,4 @@ public class CreateModuleDto
 
     [Required(ErrorMessage = "Estimated mins is required is required")]
     public int EstimatedDurationMins { get; set; }
-
-    [Required(ErrorMessage = "Course Id (course_id) is required and should be valid format")]
-    public Guid? CourseId { get; set; }
 }

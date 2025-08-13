@@ -3,6 +3,7 @@ using Khourse.Api.Common;
 using Khourse.Api.Configs;
 using Khourse.Api.Data;
 using Khourse.Api.Extensions;
+using Khourse.Api.Filters;
 using Khourse.Api.Middlewares;
 using Khourse.Api.Models;
 using Khourse.Api.Repositories;
@@ -76,6 +77,7 @@ builder.Services.AddHostedService<EmailBackgroundService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+builder.Services.AddScoped<CourseExistFilter>();
 
 
 // Register API Versioning 

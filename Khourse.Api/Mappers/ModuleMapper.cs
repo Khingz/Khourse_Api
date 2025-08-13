@@ -23,14 +23,14 @@ public static class ModuleMapper
         };
     }
 
-    public static Module ToModuleEntity(this CreateModuleDto moduleDto)
+    public static Module ToModuleEntity(this CreateModuleDto moduleDto, Guid courseId)
     {
         return new Module
         {
             Title = moduleDto.Title,
             Position = moduleDto.Position,
             EstimatedDurationMins = moduleDto.EstimatedDurationMins,
-            CourseId = moduleDto.CourseId
+            CourseId = courseId
         };
     }
 }
