@@ -10,14 +10,29 @@ public static class LessonMappers
         return new LessonDto
         {
             Id = lesson.Id,
+            Title = lesson.Title,
+            ContentType = lesson.ContentType,
+            ContentUrl = lesson.ContentUrl,
+            TextContent = lesson.TextContent,
+            DurationMins = lesson.DurationMins,
+            Position = lesson.Position,
+            IsPublished = lesson.IsPublished,
+            ModuleId = lesson.ModuleId!.Value,
+            CreatedAt = lesson.CreatedAt,
         };
     }
 
-    public static Lesson ToLessonEntity(this CreateLessonDto lessonDto)
+    public static Lesson ToLessonEntity(this CreateLessonDto lessonDto, Guid moduleId)
     {
         return new Lesson
         {
-
+            Title = lessonDto.Title,
+            ContentType = lessonDto.ContentType,
+            ContentUrl = lessonDto.ContentUrl,
+            TextContent = lessonDto.TextContent,
+            DurationMins = lessonDto.DurationMins,
+            Position = lessonDto.Position,
+            ModuleId = moduleId
         };
     }
 }

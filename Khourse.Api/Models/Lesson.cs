@@ -18,8 +18,8 @@ public class Lesson : BaseModel
     [Column("text_content")]
     public string? TextContent { get; set; }
 
-    [Column("video_duration_mins")]
-    public int? VideoDurationMins { get; set; }
+    [Column("duration_mins")]
+    public int? DurationMins { get; set; }
 
     [Column("position")]
     public int Position { get; set; }

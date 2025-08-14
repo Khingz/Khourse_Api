@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Khourse.Api.Filters;
 
-public class ModuleExistFilter(IModuleRepository moduleRepo) : IAsyncActionFilter
+public class ModuleExistFilter(IModuleRepository moduleRepo, ICourseRepository courseRepo) : IAsyncActionFilter
 {
     private readonly IModuleRepository _moduleRepo = moduleRepo;
+    private readonly ICourseRepository _courseRepo = courseRepo;
+
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         if (!context.RouteData.Values.TryGetValue("moduleId", out var moduleIdValue)
@@ -25,7 +27,7 @@ public class ModuleExistFilter(IModuleRepository moduleRepo) : IAsyncActionFilte
             );
             return;
         }
-        var module = await _moduleRepo.ModueByIdAsync(moduleId);
+        var module = await _moduleRepo.ModuleByIdAsync(moduleId);
         if (module == null)
         {
             context.Result = new NotFoundObjectResult(
@@ -41,8 +43,25 @@ public class ModuleExistFilter(IModuleRepository moduleRepo) : IAsyncActionFilte
             return;
         }
 
+        var course = await _courseRepo.CourseById(module.CourseId!.Value);
+        if (course == null)
+        {
+            context.Result = new NotFoundObjectResult(
+                ApiErrorResponse.Fail(
+                    StatusCodes.Status404NotFound,
+                    $"Course not found",
+
+                    [
+                        new ErrorDetail { Code = "COURSE_NOT_FOUND", Description = "No course exists with the specified module ID." }
+                    ]
+                )
+            );
+            return;
+        }
+
         // Store course for controller access
         context.HttpContext.Items["Module"] = module;
+        context.HttpContext.Items["OwnerId"] = course.AuthorId;
         await next();
     }
 }

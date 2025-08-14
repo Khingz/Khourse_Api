@@ -12,7 +12,6 @@ public static class ModuleMapper
             Id = module.Id,
             Title = module.Title,
             Position = module.Position,
-            EstimatedDurationMins = module.EstimatedDurationMins,
             IsPublished = module.IsPublished,
             CourseId = module.CourseId,
             CreatedAt = module.CreatedAt,
@@ -29,7 +28,6 @@ public static class ModuleMapper
         {
             Title = moduleDto.Title,
             Position = moduleDto.Position,
-            EstimatedDurationMins = moduleDto.EstimatedDurationMins,
             CourseId = courseId
         };
     }

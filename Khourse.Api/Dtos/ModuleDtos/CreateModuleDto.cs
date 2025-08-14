@@ -10,7 +10,4 @@ public class CreateModuleDto
 
     [Required(ErrorMessage = "Module position in course is required")]
     public int Position { get; set; }
-
-    [Required(ErrorMessage = "Estimated mins is required is required")]
-    public int EstimatedDurationMins { get; set; }
 }

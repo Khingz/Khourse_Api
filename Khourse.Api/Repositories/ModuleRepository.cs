@@ -30,11 +30,21 @@ public class ModuleRepository(AppDbContext dbContext) : IModuleRepository
         return await _dbContext.Module
             .Where(m => m.CourseId == courseId)
             .OrderBy(m => m.Position)
+            .Include(m => m.Lessons)
+            .Include(m => m.Quizzes)
+            .Include(m => m.Resources)
+            .AsSplitQuery()
             .ToListAsync();
     }
     public async Task<Module?> GetByIdAsync(Guid moduleId, Guid courseId)
     {
-        var module = await _dbContext.Module.FirstOrDefaultAsync(m => m.Id == moduleId && m.CourseId == courseId) ?? throw new KeyNotFoundException("Module not found!");
+        var module = await _dbContext.Module
+                .Include(m => m.Lessons)
+                .Include(m => m.Quizzes)
+                .Include(m => m.Resources)
+                .AsSplitQuery() // Split into multiple SQL queries (usually faster, avoids data duplication)
+                .FirstOrDefaultAsync(m => m.Id == moduleId && m.CourseId == courseId)
+                ?? throw new KeyNotFoundException("Module not found!");
         return module;
     }
 
@@ -59,6 +69,5 @@ public class ModuleRepository(AppDbContext dbContext) : IModuleRepository
             : updateDto.Title;
 
         module.Position = updateDto.Position ?? module.Position;
-        module.EstimatedDurationMins = updateDto.EstimatedDurationMins ?? module.EstimatedDurationMins;
     }
 }

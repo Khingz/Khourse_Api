@@ -14,10 +14,9 @@ namespace Khourse.Api.Controllers;
 [ApiVersion("1.0")]
 [Route("api/{version:apiVersion}/courses/{courseId}/modules")]
 [ServiceFilter(typeof(CourseExistFilter))]
-public class ModuleController(IModuleRepository moduleRepo, ICourseRepository courseRepo, ICurrentUserService currentUserService, IAccountRepository accountRepo) : BaseController
+public class ModuleController(IModuleRepository moduleRepo, ICurrentUserService currentUserService, IAccountRepository accountRepo) : BaseController
 {
     private readonly IModuleRepository _moduleRepo = moduleRepo;
-    private readonly ICourseRepository _courseRepo = courseRepo;
     private readonly ICurrentUserService _currentUserService = currentUserService;
     private readonly IAccountRepository _accountRepo = accountRepo;
 

@@ -53,8 +53,16 @@ public class LessonRepository(AppDbContext dbContext) : ILessonRepository
         return lesson;
     }
 
-    private static void UpdateLessonFields(Lesson module, UpdateLessonRequestDto updateDto)
+    private static void UpdateLessonFields(Lesson lesson, UpdateLessonRequestDto updateDto)
     {
-
+        lesson.Title = string.IsNullOrWhiteSpace(updateDto.Title)
+            ? lesson.Title
+            : updateDto.Title;
+        lesson.ContentUrl = string.IsNullOrWhiteSpace(updateDto.ContentUrl)
+            ? lesson.ContentUrl
+            : updateDto.ContentUrl;
+        lesson.Position = updateDto.Position ?? lesson.Position;
+        lesson.DurationMins = updateDto.DurationMins ?? lesson.DurationMins;
+        lesson.ContentType = updateDto.ContentType ?? lesson.ContentType;
     }
 }

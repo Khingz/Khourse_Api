@@ -12,9 +12,6 @@ public class Module : BaseModel
     [Column("position")]
     public int Position { get; set; }
 
-    [Column("estimated_duration_mins")]
-    public int EstimatedDurationMins { get; set; }
-
     [Column("is_published")]
     public bool IsPublished { get; set; } = false;
 
