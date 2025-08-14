@@ -26,7 +26,7 @@ public class ResourceController(ICurrentUserService currentUserService, IAccount
     {
         var module = HttpContext.Items["Module"] as Module;
         string ownerId = (string)HttpContext.Items["OwnerId"]!;
-        var currentUser = await _accountRepo.UserByIdAsync(_currentUserService.UserId!) ?? throw new UnauthorizedAccessException("You are not authorized to add module to this course");
+        var currentUser = await _accountRepo.UserByIdAsync(_currentUserService.UserId!) ?? throw new UnauthorizedAccessException("You are not authorized to add quiz to this module");
         var isAdmin = await _accountRepo.UserHasRoleAsync(currentUser, "Admin");
         if (!isAdmin && _currentUserService.UserId != ownerId)
         {
@@ -51,7 +51,7 @@ public class ResourceController(ICurrentUserService currentUserService, IAccount
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllCourseModules(Guid moduleId)
+    public async Task<IActionResult> GetAllResourceModules(Guid moduleId)
     {
         var resource = await _resourceRepo.GetAllAsync(moduleId);
         var resourceDto = resource.Select(l => l.ToResourceDto());
@@ -97,6 +97,6 @@ public class ResourceController(ICurrentUserService currentUserService, IAccount
             throw new UnauthorizedAccessException("You are not authorized to delete this resource");
         }
         var resourceUpdate = await _resourceRepo.UpdateAsync(guid, updateDto, moduleId);
-        return OkResponse("lesson updated successfully", resourceUpdate!.ToResourceDto());
+        return OkResponse("Quiz updated successfully", resourceUpdate!.ToResourceDto());
     }
 }

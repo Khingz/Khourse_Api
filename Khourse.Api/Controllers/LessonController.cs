@@ -52,7 +52,7 @@ public class LessonController(ICurrentUserService currentUserService, IAccountRe
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllCourseModules(Guid moduleId)
+    public async Task<IActionResult> GetAllModuleLessons(Guid moduleId)
     {
         var lesson = await _lessonRepo.GetAllAsync(moduleId);
         var lessonDto = lesson.Select(l => l.ToLessonDto());

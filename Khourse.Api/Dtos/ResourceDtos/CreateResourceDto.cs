@@ -9,8 +9,6 @@ public class CreateResourceDto
     [StringLength(100, MinimumLength = 3, ErrorMessage = "Title must be between 3 and 100 characters")]
     public string Title { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Description is required")]
-    [StringLength(100, MinimumLength = 3, ErrorMessage = "Description must be between 3 and 100 characters")]
     public string Description { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Resource type is required")]
