@@ -1,7 +1,6 @@
 using Khourse.Api.Dtos.LessonDtos;
 using Khourse.Api.Dtos.QuizDtos;
 using Khourse.Api.Dtos.ResourceDtos;
-using Khourse.Api.Models;
 
 namespace Khourse.Api.Dtos.ModuleDtos;
 

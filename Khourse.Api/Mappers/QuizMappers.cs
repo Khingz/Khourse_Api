@@ -1,4 +1,3 @@
-using System;
 using Khourse.Api.Dtos.QuizDtos;
 using Khourse.Api.Models;
 

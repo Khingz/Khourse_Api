@@ -1,4 +1,3 @@
-using System;
 using Khourse.Api.Data;
 using Khourse.Api.Dtos.LessonDtos;
 using Khourse.Api.Models;

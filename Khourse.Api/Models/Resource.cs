@@ -19,7 +19,7 @@ public class Resource : BaseModel
     public string ResourceUrl { get; set; } = string.Empty;
 
     [Column("module_id")]
-    public Guid? ModuleId { get; set; }
+    public Guid ModuleId { get; set; }
 
     [Column("module")]
     public Module? Module { get; set; }
